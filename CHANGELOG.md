@@ -3,6 +3,11 @@
 Tutte le modifiche rilevanti di Argo per Android.
 Versioni: `versionName` (semver) + build `AAAAMMGG.HHMM` (ora di Roma).
 
+## [0.2.2] · build 20261118.1115
+
+### Aggiunto
+- Se Argo si chiude per un errore, al riavvio mostra il dettaglio tecnico con **Condividi** (solo l'errore: niente testo degli incontri né audio). Serve quando il telefono non è collegato ad Android Studio
+
 ## [0.2.1] · build 20261118.1057
 
 ### Corretto

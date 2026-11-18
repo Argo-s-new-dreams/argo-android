@@ -36,6 +36,7 @@ class ArgoApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        RegistroCrash.installa(this)   // per primo: anche un errore qui sotto resta leggibile al riavvio
         archivio = Archivio(filesDir)
         impostazioni = Impostazioni(this)
         modelloLocale = ModelloLocale(this, ambito)
