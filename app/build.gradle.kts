@@ -10,7 +10,7 @@ plugins {
 }
 
 // Versione come su iPhone: semver per le persone, build AAAAMMGG.HHMM (ora di Roma) nel file VERSIONE.
-val versioneMarketing = "0.2.2"
+val versioneMarketing = "0.2.3"
 val build: String = rootProject.file("VERSIONE").readText().trim()
 
 // Google Play vuole un versionCode intero e sempre crescente: minuti trascorsi dal 1/1/2026 alla build.

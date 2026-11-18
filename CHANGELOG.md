@@ -3,6 +3,14 @@
 Tutte le modifiche rilevanti di Argo per Android.
 Versioni: `versionName` (semver) + build `AAAAMMGG.HHMM` (ora di Roma).
 
+## [0.2.3] · build 20261118.1159
+
+Prima prova di Argo locale sul Galaxy S21: trascrizione riuscita, elaborazione ferma sulla lettura delle foto.
+
+### Corretto
+- Build ottimizzata (Lab e Play): R8 toglieva a ML Kit Text Recognition un pezzo usato per riflessione → `NullPointerException` in `com.google.mlkit.vision.text.internal` durante la lettura delle foto. Regole di protezione per ML Kit e R8 in modalità compatibile (non «full»)
+- Se la lettura di una foto fallisce, la foto resta senza testo e l'incontro si completa lo stesso (il computer può rileggerla con il modello vision)
+
 ## [0.2.2] · build 20261118.1115
 
 ### Aggiunto

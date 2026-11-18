@@ -34,15 +34,22 @@ object LettoreFoto {
     /** Testo della foto e riferimenti (email, siti, telefoni). Se qualcosa va storto: testo vuoto, mai un errore. */
     suspend fun leggi(file: File): Pair<String, List<String>> = withContext(Dispatchers.Default) {
         val bitmap = BitmapFactory.decodeFile(file.path) ?: return@withContext "" to emptyList()
-        val lettore = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
         try {
-            val risultato = lettore.process(InputImage.fromBitmap(bitmap, 0)).await()
-            val testo = risultato.textBlocks.flatMap { blocco -> blocco.lines.map { it.text } }.joinToString("\n")
-            testo to Riferimenti.trova(testo)
-        } catch (e: Exception) {
+            val lettore = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+            try {
+                val risultato = lettore.process(InputImage.fromBitmap(bitmap, 0)).await()
+                val testo = risultato.textBlocks.flatMap { blocco -> blocco.lines.map { it.text } }.joinToString("\n")
+                testo to Riferimenti.trova(testo)
+            } finally {
+                lettore.close()
+            }
+        } catch (e: kotlinx.coroutines.CancellationException) {
+            throw e
+        } catch (e: Throwable) {
+            // Una foto illeggibile non deve fermare l'incontro: resta senza testo, il computer la rilegge con il modello vision.
+            android.util.Log.w("Argo", "OCR non riuscito su ${file.name}", e)
             "" to emptyList()
         } finally {
-            lettore.close()
             bitmap.recycle()
         }
     }
