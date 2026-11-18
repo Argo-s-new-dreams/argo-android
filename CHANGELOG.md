@@ -3,6 +3,12 @@
 Tutte le modifiche rilevanti di Argo per Android.
 Versioni: `versionName` (semver) + build `AAAAMMGG.HHMM` (ora di Roma).
 
+## [0.2.1] · build 20261118.1057
+
+### Corretto
+- All'apertura Argo riprende gli incontri rimasti a metà: un errore in quella ripresa chiudeva l'app. Ora finisce nella scheda dell'incontro (con «Riprova») e nel Logcat con il tag `Argo`
+- Qualunque errore nei lavori di sottofondo viene registrato invece di chiudere l'app
+
 ## [0.2.0] · build 20261118.1048
 
 **Argo locale**: un motore di trascrizione dentro Argo, che funziona su ogni telefono Android 12+ anche quando la trascrizione di Google non c'è (es. Galaxy S21).

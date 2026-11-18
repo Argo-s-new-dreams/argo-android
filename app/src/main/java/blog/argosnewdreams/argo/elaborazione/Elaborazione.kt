@@ -115,6 +115,16 @@ class Elaborazione(
                     avviso = avvisi.distinct().joinToString("\n").ifEmpty { null },
                 )
             }
+        } catch (e: kotlinx.coroutines.CancellationException) {
+            throw e
+        } catch (e: Throwable) {
+            // Qualunque imprevisto resta nella scheda dell'incontro, con «Riprova»: mai un'app che si chiude.
+            android.util.Log.e("Argo", "Elaborazione dell'incontro $id non riuscita", e)
+            runCatching {
+                archivio.aggiorna(id) {
+                    it.copy(stato = StatoIncontro.ERRORE, messaggioErrore = "Elaborazione non riuscita: ${e.message ?: e.javaClass.simpleName}")
+                }
+            }
         } finally {
             _fasi.update { it - id }
         }
