@@ -1,6 +1,8 @@
 package blog.argosnewdreams.argo.trascrizione
 
+import android.util.Log
 import com.google.mlkit.genai.common.DownloadStatus
+import com.google.mlkit.genai.common.GenAiException
 import com.google.mlkit.genai.common.FeatureStatus
 import com.google.mlkit.genai.speechrecognition.SpeechRecognition
 import com.google.mlkit.genai.speechrecognition.SpeechRecognizer
@@ -36,6 +38,8 @@ class Motore(val client: SpeechRecognizer, val nome: String) : AutoCloseable {
  */
 object MotoreTrascrizione {
 
+    private const val TAG = "Argo"
+
     val lingueProposte = listOf(
         "it-IT" to "Italiano",
         "en-US" to "Inglese (USA)",
@@ -53,28 +57,43 @@ object MotoreTrascrizione {
             Modalita.AUTOMATICA -> listOf(Modalita.AVANZATA, Modalita.BASE)
             else -> listOf(preferenza)
         }
-        var ultimoMotivo = "La trascrizione sul dispositivo non è disponibile su questo telefono."
+        // Diagnosi per modalità: cosa ha risposto ML Kit, anche quando l'errore non ha un messaggio.
+        val diagnosi = mutableListOf<String>()
         for (modalita in tentativi) {
             val client = runCatching { crea(lingua, modalita) }.getOrElse {
-                ultimoMotivo = it.message ?: ultimoMotivo
+                Log.w(TAG, "Creazione client ${modalita.name} ($lingua) fallita", it)
+                diagnosi += "${modalita.etichetta}: ${descrivi(it)}"
                 null
             } ?: continue
             val motore = Motore(client, "Android · ${modalita.etichetta.lowercase()}")
             val stato = runCatching { client.checkStatus() }.getOrElse {
-                ultimoMotivo = it.message ?: ultimoMotivo
-                FeatureStatus.UNAVAILABLE
+                Log.w(TAG, "checkStatus ${modalita.name} ($lingua) fallito", it)
+                diagnosi += "${modalita.etichetta}: ${descrivi(it)}"
+                null
             }
+            Log.i(TAG, "Modalità ${modalita.name} ($lingua): stato $stato")
             when (stato) {
                 FeatureStatus.AVAILABLE -> return StatoModello.Pronto(motore)
                 FeatureStatus.DOWNLOADABLE -> return StatoModello.DaScaricare(motore)
                 FeatureStatus.DOWNLOADING -> return StatoModello.InDownload(motore)
+                null -> motore.close()
                 else -> {
                     motore.close()
-                    ultimoMotivo = "Modalità ${modalita.etichetta} non disponibile per ${nomeLingua(lingua)} su questo telefono."
+                    diagnosi += "${modalita.etichetta}: non supportata per ${nomeLingua(lingua)} su questo telefono"
                 }
             }
         }
-        return StatoModello.NonDisponibile(ultimoMotivo)
+        val dettaglio = diagnosi.joinToString("\n").ifEmpty { "nessuna risposta da ML Kit" }
+        return StatoModello.NonDisponibile("La trascrizione sul dispositivo non è disponibile.\n$dettaglio")
+    }
+
+    /** Tipo, messaggio e codici ML Kit di un errore: serve a capire, non solo a dire «non va». */
+    private fun descrivi(errore: Throwable): String {
+        val radice = generateSequence(errore) { it.cause }.last()
+        val codice = (errore as? GenAiException)?.let { " [codice ${it.errorCode}, AICore ${it.aiCoreErrorCode}]" }.orEmpty()
+        val messaggio = errore.message ?: radice.message ?: "senza messaggio"
+        val tipo = if (radice !== errore) "${errore.javaClass.simpleName} ← ${radice.javaClass.simpleName}" else errore.javaClass.simpleName
+        return "$tipo: $messaggio$codice"
     }
 
     /** Scarica il modello: emette la percentuale (0…100) o null se il totale è ignoto; termina a download finito. */

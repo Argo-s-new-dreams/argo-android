@@ -3,6 +3,14 @@
 Tutte le modifiche rilevanti di Argo per Android.
 Versioni: `versionName` (semver) + build `AAAAMMGG.HHMM` (ora di Roma).
 
+## [0.1.1] · build 20261118.1028
+
+Diagnosi della trascrizione (prima prova su Galaxy S21).
+
+### Modificato
+- Se la trascrizione sul dispositivo non è disponibile, Argo mostra **cosa ha risposto ML Kit per ogni modalità** (tipo di errore, messaggio, codici ML Kit/AICore) invece di un messaggio generico
+- Le stesse informazioni finiscono nel Logcat con il tag `Argo`
+
 ## [0.1.0] · build 20261118.0830
 
 Prima versione: il taccuino da fiera su Android, allineato ad Argo per iPhone 0.6.
