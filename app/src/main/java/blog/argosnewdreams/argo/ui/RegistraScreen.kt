@@ -113,34 +113,18 @@ fun RegistraScreen(app: ArgoApp, indietro: () -> Unit, alTermine: (String) -> Un
 @Composable
 private fun Preparazione(app: ArgoApp, indietro: () -> Unit) {
     val context = LocalContext.current
-    val ambito = rememberCoroutineScope()
     val linguaPredefinita by app.impostazioni.lingua.collectAsState()
     val modalita by app.impostazioni.modalita.collectAsState()
     var lingua by remember(linguaPredefinita) { mutableStateOf(linguaPredefinita) }
-    var stato by remember { mutableStateOf<StatoModello?>(null) }
-    var download by remember { mutableStateOf<Int?>(null) }
-    var scaricando by remember { mutableStateOf(false) }
     var errore by remember { mutableStateOf<String?>(null) }
-    var tentativo by remember { mutableStateOf(0) }
-    // Il motore passa alla registrazione solo se si parte: altrimenti va chiuso qui.
-    var consegnato by remember { mutableStateOf(false) }
-
-    LaunchedEffect(lingua, modalita, tentativo) {
-        stato = null
-        stato = MotoreTrascrizione.prepara(lingua, modalita)
-    }
-    DisposableEffect(stato) {
-        val corrente = stato
-        onDispose { if (!consegnato) motoreDi(corrente)?.close() }
-    }
+    val motore = rememberStatoMotore(app, lingua, modalita)
 
     fun avvia() {
-        val motore = (stato as? StatoModello.Pronto)?.motore
         try {
-            consegnato = true
-            app.registrazione.avvia(lingua, motore)
+            // Se il motore non è pronto si registra lo stesso: trascrizione a fine incontro.
+            app.registrazione.avvia(lingua, motore.consegna())
         } catch (e: Exception) {
-            consegnato = false
+            motore.consegnato = false
             errore = e.message ?: "Non riesco ad avviare la registrazione."
         }
     }
@@ -174,25 +158,7 @@ private fun Preparazione(app: ArgoApp, indietro: () -> Unit) {
                 }
             }
 
-            CartaModello(
-                stato = stato,
-                download = download,
-                scaricando = scaricando,
-                scarica = { motore ->
-                    scaricando = true
-                    ambito.launch {
-                        try {
-                            MotoreTrascrizione.scarica(motore).collect { download = it }
-                        } catch (e: Exception) {
-                            errore = e.message
-                        } finally {
-                            scaricando = false
-                            download = null
-                            tentativo++
-                        }
-                    }
-                },
-            )
+            CartaMotore(app, motore)
 
             Button(
                 onClick = {
@@ -205,7 +171,7 @@ private fun Preparazione(app: ArgoApp, indietro: () -> Unit) {
                     }
                     if (mancano.isEmpty()) avvia() else permessi.launch(mancano.toTypedArray())
                 },
-                enabled = stato != null && !scaricando,
+                enabled = motore.stato != null,
                 modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 24.dp).height(52.dp),
             ) {
                 Text("Ho informato i partecipanti · Registra")
@@ -220,65 +186,6 @@ private fun Preparazione(app: ArgoApp, indietro: () -> Unit) {
             title = { Text("Attenzione") },
             text = { Text(messaggio) },
         )
-    }
-}
-
-private fun motoreDi(stato: StatoModello?) = when (stato) {
-    is StatoModello.Pronto -> stato.motore
-    is StatoModello.DaScaricare -> stato.motore
-    is StatoModello.InDownload -> stato.motore
-    else -> null
-}
-
-@Composable
-private fun CartaModello(
-    stato: StatoModello?,
-    download: Int?,
-    scaricando: Boolean,
-    scarica: (blog.argosnewdreams.argo.trascrizione.Motore) -> Unit,
-) {
-    Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)) {
-        Column(Modifier.padding(16.dp).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            when (stato) {
-                null -> Row(verticalAlignment = Alignment.CenterVertically) {
-                    CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
-                    Spacer(Modifier.width(12.dp))
-                    Text("Controllo la trascrizione sul telefono…")
-                }
-                is StatoModello.Pronto -> {
-                    Text("Trascrizione dal vivo pronta", fontWeight = FontWeight.Medium, color = Argo.colori.ok)
-                    Text("${stato.motore.nome} · vedrai il testo mentre parli.", style = MaterialTheme.typography.bodySmall, color = Argo.colori.tenue)
-                }
-                is StatoModello.DaScaricare, is StatoModello.InDownload -> {
-                    Text("Il modello della lingua non è ancora sul telefono", fontWeight = FontWeight.Medium, color = Argo.colori.avviso)
-                    Text(
-                        "Scaricalo ora (serve la rete, una volta sola). Puoi anche registrare subito: la trascrizione partirà a fine incontro, quando il modello c'è.",
-                        style = MaterialTheme.typography.bodySmall, color = Argo.colori.tenue,
-                    )
-                    if (scaricando) {
-                        if (download != null) LinearProgressIndicator(progress = { download / 100f }, modifier = Modifier.fillMaxWidth())
-                        else LinearProgressIndicator(Modifier.fillMaxWidth())
-                    } else {
-                        OutlinedButton(onClick = { motoreDi(stato)?.let(scarica) }) {
-                            Icon(Icons.Outlined.Download, contentDescription = null)
-                            Spacer(Modifier.width(8.dp))
-                            Text("Scarica il modello")
-                        }
-                    }
-                }
-                is StatoModello.NonDisponibile -> {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Outlined.WarningAmber, contentDescription = null, tint = Argo.colori.avviso)
-                        Spacer(Modifier.width(8.dp))
-                        Text("Trascrizione non disponibile", fontWeight = FontWeight.Medium, color = Argo.colori.avviso)
-                    }
-                    Text(
-                        "${stato.motivo} Puoi registrare comunque: Argo riproverà a fine incontro e, se non riesce, tiene l'audio finché non lo trascrivi.",
-                        style = MaterialTheme.typography.bodySmall, color = Argo.colori.tenue,
-                    )
-                }
-            }
-        }
     }
 }
 

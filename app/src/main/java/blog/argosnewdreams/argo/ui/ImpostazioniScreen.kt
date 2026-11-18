@@ -77,7 +77,8 @@ fun ImpostazioniScreen(app: ArgoApp, indietro: () -> Unit) {
 
             Sezione("Trascrizione")
             Modalita.entries.forEach { m -> Scelta(m.etichetta, m.descrizione, m == modalita) { imp.impostaModalita(m) } }
-            StatoModelloRiga(lingua, modalita)
+            CartaMotore(app, rememberStatoMotore(app, lingua, modalita), contesto = "registrare")
+            ModelloLocaleRiga(app)
 
             Sezione("Privacy")
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -98,6 +99,13 @@ fun ImpostazioniScreen(app: ArgoApp, indietro: () -> Unit) {
                 modifier = Modifier.padding(top = 8.dp),
             )
 
+            Sezione("Crediti")
+            Text(
+                "Argo locale usa NVIDIA Parakeet TDT 0.6B v3 (CC-BY-4.0, versione int8 per sherpa-onnx di k2-fsa), " +
+                    "sherpa-onnx (Apache 2.0) e Silero VAD (MIT). Trascrizione e testo delle foto anche con Google ML Kit.",
+                style = MaterialTheme.typography.bodySmall, color = Argo.colori.tenue,
+            )
+
             Sezione("Informazioni")
             Text("Argo per Android ${BuildConfig.VERSION_NAME} · build ${BuildConfig.BUILD_ARGO}", style = MaterialTheme.typography.bodyMedium)
             Text("Argo's New Dreams · argosnewdreams.blog", style = MaterialTheme.typography.bodySmall, color = Argo.colori.tenue)
@@ -106,61 +114,27 @@ fun ImpostazioniScreen(app: ArgoApp, indietro: () -> Unit) {
     }
 }
 
+/** Spazio occupato da Argo locale, con la possibilità di liberarlo. */
 @Composable
-private fun StatoModelloRiga(lingua: String, modalita: Modalita) {
-    val ambito = rememberCoroutineScope()
-    var stato by remember { mutableStateOf<StatoModello?>(null) }
-    var tentativo by remember { mutableIntStateOf(0) }
-    var download by remember { mutableStateOf<Int?>(null) }
-    var scaricando by remember { mutableStateOf(false) }
-    var errore by remember { mutableStateOf<String?>(null) }
-
-    LaunchedEffect(lingua, modalita, tentativo) {
-        stato = null
-        stato = MotoreTrascrizione.prepara(lingua, modalita)
+private fun ModelloLocaleRiga(app: ArgoApp) {
+    val stato by app.modelloLocale.stato.collectAsState()
+    var conferma by remember { mutableStateOf(false) }
+    if (stato != blog.argosnewdreams.argo.trascrizione.ModelloLocale.Stato.Pronto) return
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().padding(top = 4.dp)) {
+        Text(
+            "Argo locale occupa circa ${blog.argosnewdreams.argo.trascrizione.ModelloLocale.MEGABYTE} MB sul telefono.",
+            style = MaterialTheme.typography.bodySmall, color = Argo.colori.tenue, modifier = Modifier.weight(1f),
+        )
+        androidx.compose.material3.TextButton(onClick = { conferma = true }) { Text("Elimina modello") }
     }
-    DisposableEffect(stato) {
-        val corrente = stato
-        onDispose {
-            when (corrente) {
-                is StatoModello.Pronto -> corrente.motore.close()
-                is StatoModello.DaScaricare -> corrente.motore.close()
-                is StatoModello.InDownload -> corrente.motore.close()
-                else -> Unit
-            }
-        }
-    }
-
-    Column(Modifier.fillMaxWidth().padding(top = 4.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        val nome = MotoreTrascrizione.nomeLingua(lingua)
-        when (val s = stato) {
-            null -> Row(verticalAlignment = Alignment.CenterVertically) {
-                CircularProgressIndicator(Modifier.size(16.dp), strokeWidth = 2.dp)
-                Spacer(Modifier.width(8.dp)); Text("Controllo il modello per $nome…", style = MaterialTheme.typography.bodySmall)
-            }
-            is StatoModello.Pronto -> Text("$nome: pronto sul telefono (${s.motore.nome})", color = Argo.colori.ok, style = MaterialTheme.typography.bodyMedium)
-            is StatoModello.NonDisponibile -> Text(s.motivo, color = Argo.colori.avviso, style = MaterialTheme.typography.bodyMedium)
-            is StatoModello.DaScaricare, is StatoModello.InDownload -> {
-                Text("$nome: modello da scaricare (una volta sola, poi funziona offline)", color = Argo.colori.avviso, style = MaterialTheme.typography.bodyMedium)
-                if (scaricando || s is StatoModello.InDownload) {
-                    if (download != null) LinearProgressIndicator(progress = { download!! / 100f }, modifier = Modifier.fillMaxWidth())
-                    else LinearProgressIndicator(Modifier.fillMaxWidth())
-                }
-                if (!scaricando) OutlinedButton(onClick = {
-                    val motore = (s as? StatoModello.DaScaricare)?.motore ?: (s as StatoModello.InDownload).motore
-                    scaricando = true
-                    ambito.launch {
-                        try { MotoreTrascrizione.scarica(motore).collect { download = it } }
-                        catch (e: Exception) { errore = e.message }
-                        finally { scaricando = false; download = null; tentativo++ }
-                    }
-                }) {
-                    Icon(Icons.Outlined.Download, null); Spacer(Modifier.width(8.dp))
-                    Text(if (s is StatoModello.InDownload) "Segui il download" else "Scarica il modello")
-                }
-            }
-        }
-        errore?.let { Text(it, color = Argo.colori.errore, style = MaterialTheme.typography.bodySmall) }
+    if (conferma) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { conferma = false },
+            title = { Text("Eliminare il modello di Argo locale?") },
+            text = { Text("Liberi spazio; per trascrivere di nuovo con Argo locale andrà riscaricato.") },
+            confirmButton = { androidx.compose.material3.TextButton(onClick = { conferma = false; app.modelloLocale.elimina() }) { Text("Elimina") } },
+            dismissButton = { androidx.compose.material3.TextButton(onClick = { conferma = false }) { Text("Annulla") } },
+        )
     }
 }
 

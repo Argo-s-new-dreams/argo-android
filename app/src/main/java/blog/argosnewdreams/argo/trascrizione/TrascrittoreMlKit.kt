@@ -23,21 +23,19 @@ import kotlinx.coroutines.withTimeoutOrNull
  * Ogni pausa chiude la sessione di riconoscimento e la ripresa ne apre una nuova con l'offset
  * della registrazione: così i tempi restano giusti qualunque sia l'origine che usa ML Kit.
  */
-class TrascrittoreDalVivo(
-    private val motore: Motore,
+class TrascrittoreMlKit(
+    private val motore: Motore.MlKit,
     private val ambito: CoroutineScope,
     /** Secondi registrati in questo momento. */
     private val orologio: () -> Double,
     private val alSegmento: (Segmento) -> Unit,
-) {
+) : TrascrizioneDalVivo {
     private val _parziale = MutableStateFlow("")
-    /** Testo provvisorio della frase in corso, da mostrare in grigio. */
-    val parziale: StateFlow<String> = _parziale.asStateFlow()
+    override val parziale: StateFlow<String> = _parziale.asStateFlow()
     private val _errore = MutableStateFlow<String?>(null)
-    val errore: StateFlow<String?> = _errore.asStateFlow()
+    override val errore: StateFlow<String?> = _errore.asStateFlow()
 
-    /** Quanti segmenti sono arrivati: se resta 0 si ritrascrive dal file a fine registrazione. */
-    var segmentiRicevuti = 0
+    override var segmentiRicevuti = 0
         private set
 
     @Volatile private var sessione: Sessione? = null
@@ -86,16 +84,15 @@ class TrascrittoreDalVivo(
         }
     }
 
-    fun avvia() {
+    override fun avvia() {
         sessione = Sessione(orologio())
     }
 
-    fun scrivi(blocco: ByteArray) {
+    override fun scrivi(blocco: ByteArray) {
         sessione?.canale?.trySend(blocco)
     }
 
-    /** Pausa: chiude la frase in corso. */
-    suspend fun sospendi() {
+    override suspend fun sospendi() {
         val corrente = sessione ?: return
         sessione = null                 // una ripresa immediata apre la sua sessione senza toccare questa
         corrente.chiusa = true
@@ -103,9 +100,9 @@ class TrascrittoreDalVivo(
         _parziale.value = ""
     }
 
-    fun riprendi() = avvia()
+    override fun riprendi() = avvia()
 
-    suspend fun chiudi() {
+    override suspend fun chiudi() {
         sospendi()
     }
 

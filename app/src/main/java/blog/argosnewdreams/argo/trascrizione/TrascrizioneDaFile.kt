@@ -13,7 +13,7 @@ import java.io.File
  */
 object TrascrizioneDaFile {
 
-    suspend fun trascrivi(motore: Motore, file: File, durata: Double): List<Segmento> {
+    suspend fun trascrivi(motore: Motore.MlKit, file: File, durata: Double): List<Segmento> {
         val sorgente = AudioSource.fromFile(file)
         val testi = mutableListOf<String>()
         var errore: Exception? = null

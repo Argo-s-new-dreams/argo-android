@@ -7,6 +7,7 @@ import blog.argosnewdreams.argo.elaborazione.Elaborazione
 import blog.argosnewdreams.argo.modello.Archivio
 import blog.argosnewdreams.argo.modello.StatoIncontro
 import blog.argosnewdreams.argo.registrazione.RegistrazioneInCorso
+import blog.argosnewdreams.argo.trascrizione.ModelloLocale
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -24,6 +25,8 @@ class ArgoApp : Application() {
         private set
     lateinit var registrazione: RegistrazioneInCorso
         private set
+    lateinit var modelloLocale: ModelloLocale
+        private set
 
     val nomeApp: String get() = "Argo per Android ${BuildConfig.VERSION_NAME}"
 
@@ -31,7 +34,8 @@ class ArgoApp : Application() {
         super.onCreate()
         archivio = Archivio(filesDir)
         impostazioni = Impostazioni(this)
-        elaborazione = Elaborazione(archivio, impostazioni, ambito)
+        modelloLocale = ModelloLocale(this, ambito)
+        elaborazione = Elaborazione(archivio, impostazioni, modelloLocale, assets, ambito)
         registrazione = RegistrazioneInCorso(this, archivio, elaborazione, ambito)
         creaCanaleNotifiche()
 

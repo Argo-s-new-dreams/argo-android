@@ -3,6 +3,25 @@
 Tutte le modifiche rilevanti di Argo per Android.
 Versioni: `versionName` (semver) + build `AAAAMMGG.HHMM` (ora di Roma).
 
+## [0.2.0] · build 20261118.1048
+
+**Argo locale**: un motore di trascrizione dentro Argo, che funziona su ogni telefono Android 12+ anche quando la trascrizione di Google non c'è (es. Galaxy S21).
+
+### Aggiunto
+- Motore **Argo locale**: NVIDIA Parakeet TDT 0.6B v3 (25 lingue europee, italiano compreso, punteggiatura e tempi delle parole) con sherpa-onnx 1.12.21 e Silero VAD
+- Trascrizione **quasi dal vivo**: il VAD taglia l'audio nelle pause e ogni pezzo viene trascritto mentre registri; se il telefono è più lento del parlato l'audio si accoda e allo stop Argo finisce gli ultimi secondi
+- **Download del modello** (~670 MB) una volta sola: revisione fissa del repository Hugging Face, impronta SHA-256 per ogni file, ripresa dopo interruzioni, avviso se sei sui dati mobili, continua anche se lasci la schermata; Impostazioni › «Elimina modello» per liberare spazio
+- Piano B con Argo locale: trascrizione del file a fine incontro **con i tempi veri** (non più stimati)
+- Impostazioni › Crediti (Parakeet CC-BY-4.0, sherpa-onnx Apache 2.0, Silero VAD MIT) e `THIRD_PARTY_LICENSES.md`
+
+### Modificato
+- Modalità **Automatica**: Avanzata (Google) se c'è → Argo locale se scaricato → Base (Google) se pronta → proposta di scaricare Argo locale
+- Schermata Registra e Impostazioni usano lo stesso pannello del motore, con avanzamento del download in MB
+- APK solo per ARM a 64 bit (tutti i telefoni Android 12+ di fascia media e alta)
+
+### Verificato
+- Parakeet v3 int8 con lo stesso VAD su 192 s di italiano reale (Google FLEURS, 10 frasi di parlanti diversi): ~8,5% di parole sbagliate, calcolo ~0,04× il tempo reale su 2 core x86 del server di sviluppo; picco di memoria ~1,5 GB. Velocità sul telefono da misurare
+
 ## [0.1.1] · build 20261118.1028
 
 Diagnosi della trascrizione (prima prova su Galaxy S21).

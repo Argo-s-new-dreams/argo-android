@@ -10,7 +10,7 @@ plugins {
 }
 
 // Versione come su iPhone: semver per le persone, build AAAAMMGG.HHMM (ora di Roma) nel file VERSIONE.
-val versioneMarketing = "0.1.1"
+val versioneMarketing = "0.2.0"
 val build: String = rootProject.file("VERSIONE").readText().trim()
 
 // Google Play vuole un versionCode intero e sempre crescente: minuti trascorsi dal 1/1/2026 alla build.
@@ -37,6 +37,8 @@ android {
         versionName = versioneMarketing
         buildConfigField("String", "BUILD_ARGO", "\"$build\"")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        // Solo ARM a 64 bit: tutti i telefoni Android 12+ di fascia media e alta. Dimezza le librerie native.
+        ndk { abiFilters += "arm64-v8a" }
     }
 
     signingConfigs {
@@ -116,6 +118,10 @@ dependencies {
     // Tutto sul dispositivo: trascrizione (Gemini Nano / modello di sistema) e OCR con modello incluso nell'app
     implementation("com.google.mlkit:genai-speech-recognition:1.0.0-alpha2")
     implementation("com.google.mlkit:text-recognition:16.0.1")
+
+    // Argo locale: sherpa-onnx (k2-fsa, Apache 2.0) per Parakeet TDT v3 + Silero VAD.
+    // AAR ufficiale da huggingface.co/csukuangfj/sherpa-onnx-libs (android/aar), versione fissata nel repository.
+    implementation(files("libs/sherpa-onnx-1.12.21.aar"))
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.11.0")

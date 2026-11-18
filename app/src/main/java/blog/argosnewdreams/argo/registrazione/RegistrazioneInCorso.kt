@@ -12,7 +12,9 @@ import blog.argosnewdreams.argo.modello.OrigineTempi
 import blog.argosnewdreams.argo.modello.Segmento
 import blog.argosnewdreams.argo.modello.StatoIncontro
 import blog.argosnewdreams.argo.trascrizione.Motore
-import blog.argosnewdreams.argo.trascrizione.TrascrittoreDalVivo
+import blog.argosnewdreams.argo.trascrizione.TrascrittoreLocale
+import blog.argosnewdreams.argo.trascrizione.TrascrittoreMlKit
+import blog.argosnewdreams.argo.trascrizione.TrascrizioneDalVivo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,7 +41,7 @@ class RegistrazioneInCorso(
     private val ambito: CoroutineScope,
 ) {
     private var registratore: Registratore? = null
-    private var trascrittore: TrascrittoreDalVivo? = null
+    private var trascrittore: TrascrizioneDalVivo? = null
     private var motore: Motore? = null
 
     private val _attiva = MutableStateFlow<Attiva?>(null)
@@ -52,7 +54,7 @@ class RegistrazioneInCorso(
     val foto: StateFlow<List<FotoIncontro>> = _foto.asStateFlow()
 
     private val registratoreCorrente = MutableStateFlow<Registratore?>(null)
-    private val trascrittoreCorrente = MutableStateFlow<TrascrittoreDalVivo?>(null)
+    private val trascrittoreCorrente = MutableStateFlow<TrascrizioneDalVivo?>(null)
 
     val durata: StateFlow<Double> = registratoreCorrente
         .flatMapLatest { it?.durata ?: flowOf(0.0) }.stateIn(ambito, SharingStarted.Eagerly, 0.0)
@@ -81,10 +83,11 @@ class RegistrazioneInCorso(
         ServizioRegistrazione.avvia(context)
         val nuovoRegistratore = Registratore { blocco, _ -> trascrittore?.scrivi(blocco) }
         this.motore = motore
-        trascrittore = motore?.let { m ->
-            TrascrittoreDalVivo(m, ambito, orologio = { nuovoRegistratore.secondi }) { segmento ->
-                _segmenti.update { it + segmento }
-            }
+        val alSegmento: (Segmento) -> Unit = { segmento -> _segmenti.update { (it + segmento).sortedBy { s -> s.inizio } } }
+        trascrittore = when (motore) {
+            is Motore.MlKit -> TrascrittoreMlKit(motore, ambito, orologio = { nuovoRegistratore.secondi }, alSegmento = alSegmento)
+            is Motore.Locale -> TrascrittoreLocale(motore, ambito, orologio = { nuovoRegistratore.secondi }, alSegmento = alSegmento)
+            null -> null
         }
         try {
             nuovoRegistratore.avvia(archivio.fileAudio(id), ambito)
@@ -154,7 +157,7 @@ class RegistrazioneInCorso(
     suspend fun scarta() {
         val attiva = _attiva.value ?: return
         registratore?.ferma()
-        trascrittore?.chiudi()
+        trascrittore?.interrompi()
         pulisci()
         archivio.cartella(attiva.id).deleteRecursively()
     }

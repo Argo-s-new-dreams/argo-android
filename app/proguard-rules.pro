@@ -6,3 +6,6 @@
     kotlinx.serialization.KSerializer serializer(...);
 }
 -keep,includedescriptorclasses class blog.argosnewdreams.argo.**$$serializer { *; }
+
+# sherpa-onnx: la parte nativa legge e scrive i campi delle classi Kotlin via JNI, per nome
+-keep class com.k2fsa.sherpa.onnx.** { *; }

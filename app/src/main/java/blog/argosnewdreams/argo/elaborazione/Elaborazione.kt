@@ -5,7 +5,11 @@ import blog.argosnewdreams.argo.foto.LettoreFoto
 import blog.argosnewdreams.argo.modello.Archivio
 import blog.argosnewdreams.argo.modello.OrigineTempi
 import blog.argosnewdreams.argo.modello.StatoIncontro
+import android.content.res.AssetManager
+import blog.argosnewdreams.argo.trascrizione.ModelloLocale
+import blog.argosnewdreams.argo.trascrizione.Motore
 import blog.argosnewdreams.argo.trascrizione.MotoreTrascrizione
+import blog.argosnewdreams.argo.trascrizione.TrascrittoreLocale
 import blog.argosnewdreams.argo.trascrizione.StatoModello
 import blog.argosnewdreams.argo.trascrizione.TrascrizioneDaFile
 import kotlinx.coroutines.CoroutineScope
@@ -23,6 +27,8 @@ import kotlinx.coroutines.launch
 class Elaborazione(
     private val archivio: Archivio,
     private val impostazioni: Impostazioni,
+    private val modelloLocale: ModelloLocale,
+    private val assets: AssetManager,
     private val ambito: CoroutineScope,
 ) {
     private val _fasi = MutableStateFlow<Map<String, String>>(emptyMap())
@@ -47,25 +53,31 @@ class Elaborazione(
             val audio = archivio.fileAudio(id)
             if (!incontro.haTrascrizione && audio.exists()) {
                 fase("Trascrivo sul telefono…")
-                when (val stato = MotoreTrascrizione.prepara(incontro.lingua, impostazioni.modalita.value)) {
+                when (val stato = MotoreTrascrizione.prepara(incontro.lingua, impostazioni.modalita.value, modelloLocale, assets)) {
                     is StatoModello.Pronto -> stato.motore.use { motore ->
-                        val segmenti = runCatching { TrascrizioneDaFile.trascrivi(motore, audio, incontro.durata) }
-                            .getOrElse { errore ->
-                                archivio.aggiorna(id) {
-                                    it.copy(stato = StatoIncontro.ERRORE, messaggioErrore = errore.message)
-                                }
-                                return
+                        val esito = runCatching {
+                            when (motore) {
+                                // Argo locale: stessa pipeline del dal vivo, quindi tempi veri
+                                is Motore.Locale -> TrascrittoreLocale.trascriviFile(motore, audio) { fase("Trascrivo sul telefono… $it%") } to OrigineTempi.PAROLE
+                                is Motore.MlKit -> TrascrizioneDaFile.trascrivi(motore, audio, incontro.durata) to OrigineTempi.STIMATI
                             }
+                        }.getOrElse { errore ->
+                            archivio.aggiorna(id) {
+                                it.copy(stato = StatoIncontro.ERRORE, messaggioErrore = errore.message)
+                            }
+                            return
+                        }
+                        val (segmenti, tempi) = esito
                         incontro = archivio.aggiorna(id) {
-                            it.copy(segmenti = segmenti, tempi = OrigineTempi.STIMATI, motoreTrascrizione = motore.nome)
+                            it.copy(segmenti = segmenti, tempi = tempi, motoreTrascrizione = motore.nome)
                         } ?: return
-                        avvisi += "Trascritto dopo la registrazione: i tempi di frasi e foto sono stimati."
+                        if (tempi == OrigineTempi.STIMATI) avvisi += "Trascritto dopo la registrazione: i tempi di frasi e foto sono stimati."
                     }
                     is StatoModello.DaScaricare, is StatoModello.InDownload -> {
                         archivio.aggiorna(id) {
                             it.copy(
                                 stato = StatoIncontro.ERRORE,
-                                messaggioErrore = "Il modello per ${MotoreTrascrizione.nomeLingua(it.lingua)} non è ancora sul telefono. " +
+                                messaggioErrore = "Il modello di trascrizione non è ancora sul telefono. " +
                                     "Scaricalo da Impostazioni › Trascrizione, poi tocca «Riprova». L'audio resta finché non è trascritto.",
                             )
                         }
