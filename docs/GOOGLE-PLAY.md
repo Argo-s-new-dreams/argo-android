@@ -56,6 +56,19 @@ uv run --with google-api-python-client --with google-auth strumenti/play.py prom
 
 Serve una volta sola: account di servizio Google Cloud con *Google Play Android Developer API* abilitata, chiave JSON in `~/Documents/ArgoChiavi/play-service-account.json`, account invitato in Play Console › *Utenti e autorizzazioni* con il permesso di rilasciare nelle tracce di test.
 
+
+### Di notte, da solo, o quando vuoi tu
+
+`strumenti/pubblica-se-serve.sh` pubblica **solo se** su `main` ci sono modifiche dall'ultimo invio **e** una voce nuova nel `CHANGELOG.md` (altrimenti non fa nulla, o avvisa che manca la voce). Scrive il log in `~/Library/Logs/Argo/` e manda una notifica macOS.
+
+Una volta sola, per programmarlo ogni notte (se il Mac dorme, parte al risveglio):
+
+```bash
+strumenti/installa-notte.sh 03:15
+```
+
+Quando vuoi tu: `strumenti/pubblica-se-serve.sh` (oppure `--forza` per ripubblicare comunque). Per togliere la programmazione: `strumenti/installa-notte.sh --togli`.
+
 ## A ogni rilascio (a mano, piano B)
 
 1. `strumenti/nuova-build.sh` → nuovo `VERSIONE` (AAAAMMGG.HHMM, ora di Roma) e quindi nuovo `versionCode`.
