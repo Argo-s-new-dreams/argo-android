@@ -4,9 +4,9 @@
   play.py promuovi internal alpha      porta la stessa versione dal test interno al test chiuso (revisione Google)
   play.py stato                        versioni presenti in ogni traccia
 
-Account di servizio: ~/Documents/ArgoChiavi/play-service-account.json
+Account di servizio: ~/.argo-chiavi/play-service-account.json (o $ARGO_CHIAVI; vecchia sede ~/Documents/ArgoChiavi)
 """
-import re, sys
+import os, re, sys
 from datetime import datetime
 from pathlib import Path
 from google.oauth2 import service_account
@@ -15,7 +15,10 @@ from googleapiclient.errors import HttpError
 from googleapiclient.http import MediaFileUpload
 
 PACCHETTO = "blog.argosnewdreams.argo"
-CREDENZIALI = Path.home() / "Documents/ArgoChiavi/play-service-account.json"
+CHIAVI = Path(os.environ.get("ARGO_CHIAVI", Path.home() / ".argo-chiavi"))
+if not CHIAVI.is_dir():
+    CHIAVI = Path.home() / "Documents/ArgoChiavi"
+CREDENZIALI = CHIAVI / "play-service-account.json"
 AAB = Path("app/build/outputs/bundle/release/app-release.aab")
 MAPPING = Path("app/build/outputs/mapping/release/mapping.txt")
 

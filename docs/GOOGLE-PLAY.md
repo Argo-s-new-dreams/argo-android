@@ -11,7 +11,7 @@ L'equivalente di TestFlight: fino a 100 tester per app, invitati per email, inst
 Google firma l'app per gli utenti (*Play App Signing*); tu firmi solo i caricamenti. Sul Mac, **fuori dal repository**:
 
 ```bash
-mkdir -p ~/Documents/ArgoChiavi && cd ~/Documents/ArgoChiavi
+mkdir -p ~/.argo-chiavi && cd ~/.argo-chiavi
 keytool -genkeypair -v -keystore argo-upload.jks -alias argo-upload \
   -keyalg RSA -keysize 4096 -validity 10000 \
   -dname "CN=Argo's New Dreams, O=Argo's New Dreams, L=Cuneo, C=IT"
@@ -20,7 +20,7 @@ keytool -genkeypair -v -keystore argo-upload.jks -alias argo-upload \
 Poi nella cartella del progetto crea `keystore.properties` (è in `.gitignore`):
 
 ```properties
-storeFile=/Users/<tu>/Documents/ArgoChiavi/argo-upload.jks
+storeFile=/Users/<tu>/.argo-chiavi/argo-upload.jks
 storePassword=…
 keyAlias=argo-upload
 keyPassword=…
@@ -54,7 +54,7 @@ Lo script crea l'AAB firmato, lo carica nel **test interno** con le note di rila
 uv run --with google-api-python-client --with google-auth strumenti/play.py promuovi internal alpha
 ```
 
-Serve una volta sola: account di servizio Google Cloud con *Google Play Android Developer API* abilitata, chiave JSON in `~/Documents/ArgoChiavi/play-service-account.json`, account invitato in Play Console › *Utenti e autorizzazioni* con il permesso di rilasciare nelle tracce di test.
+Serve una volta sola: account di servizio Google Cloud con *Google Play Android Developer API* abilitata, chiave JSON in `~/.argo-chiavi/play-service-account.json`, account invitato in Play Console › *Utenti e autorizzazioni* con il permesso di rilasciare nelle tracce di test.
 
 
 ### Di notte, da solo, o quando vuoi tu
