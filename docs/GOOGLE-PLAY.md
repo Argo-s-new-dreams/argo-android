@@ -40,7 +40,23 @@ keyPassword=…
 - **Servizi in primo piano**: dichiarare il tipo *microfono* — «registrare un incontro su richiesta dell'utente, con notifica sempre visibile» — e, se richiesto, un breve video della registrazione.
 - **Sicurezza dei dati**: vedi sotto.
 
-## A ogni rilascio
+## A ogni rilascio (automatico)
+
+Dal Terminale del Mac, nella cartella del progetto, dopo aver aggiornato `CHANGELOG.md`:
+
+```bash
+strumenti/nuova-build.sh && strumenti/pubblica-play.sh
+```
+
+Lo script crea l'AAB firmato, lo carica nel **test interno** con le note di rilascio prese dalla prima voce del CHANGELOG (max 500 caratteri) e il file `mapping.txt`. Per portare la stessa versione al **test chiuso** (revisione di Google):
+
+```bash
+uv run --with google-api-python-client --with google-auth strumenti/play.py promuovi internal alpha
+```
+
+Serve una volta sola: account di servizio Google Cloud con *Google Play Android Developer API* abilitata, chiave JSON in `~/Documents/ArgoChiavi/play-service-account.json`, account invitato in Play Console › *Utenti e autorizzazioni* con il permesso di rilasciare nelle tracce di test.
+
+## A ogni rilascio (a mano, piano B)
 
 1. `strumenti/nuova-build.sh` → nuovo `VERSIONE` (AAAAMMGG.HHMM, ora di Roma) e quindi nuovo `versionCode`.
 2. Aggiorna `CHANGELOG.md` (e `versioneMarketing` in `app/build.gradle.kts` se cambia la versione).
