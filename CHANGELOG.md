@@ -3,7 +3,18 @@
 Tutte le modifiche rilevanti di Argo per Android.
 Versioni: `versionName` (semver) + build `AAAAMMGG.HHMM` (ora di Roma).
 
-## [0.2.4] · build (al prossimo invio)
+## [0.2.5] · build (al prossimo invio)
+
+Correzione urgente: da Android 15 in poi Argo si chiudeva appena premevi Stop.
+
+### Corretto
+- **Chiusura dell'app al termine della registrazione (Android 15 e successivi).** Il servizio «Argo sta elaborando l'incontro» partiva senza tipo, e Android chiudeva l'app. Ora parte come *mediaProcessing*, come previsto. Trovato registrando il video dimostrativo per Google Play sull'emulatore Android 17.
+
+### Da provare
+- Registra un incontro breve e premi Stop: Argo non si chiude, compare l'avviso «Argo sta elaborando l'incontro» e poi l'incontro pronto
+- Durante l'elaborazione torna alla schermata Home: l'avviso resta nella tendina
+
+## [0.2.4] · build 20261120.2308
 
 Gli incontri lunghi si elaborano anche a schermo spento, e in Impostazioni trovi il testo completo delle licenze.
 

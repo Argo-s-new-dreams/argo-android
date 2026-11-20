@@ -15,7 +15,6 @@ import android.os.PowerManager
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import blog.argosnewdreams.argo.ArgoApp
 import blog.argosnewdreams.argo.MainActivity
@@ -35,7 +34,9 @@ class ServizioElaborazione : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val tipo = if (Build.VERSION.SDK_INT >= 35) ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROCESSING
         else ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
-        ServiceCompat.startForeground(this, ID_NOTIFICA, notifica(this, intent?.getStringExtra(EXTRA_FASE)), tipo)
+        // Chiamata diretta, non ServiceCompat: androidx core 1.19 accetta solo i tipi di Android 14 e
+        // trasforma mediaProcessing in «nessun tipo», che da Android 15 fa chiudere l'app.
+        startForeground(ID_NOTIFICA, notifica(this, intent?.getStringExtra(EXTRA_FASE)), tipo)
         attivo = true
         if (risveglio == null) {
             risveglio = getSystemService(PowerManager::class.java)
