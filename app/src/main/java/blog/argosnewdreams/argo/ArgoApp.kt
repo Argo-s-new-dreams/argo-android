@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.util.Log
 import blog.argosnewdreams.argo.elaborazione.Elaborazione
+import blog.argosnewdreams.argo.elaborazione.ServizioElaborazione
 import blog.argosnewdreams.argo.modello.Archivio
 import blog.argosnewdreams.argo.modello.StatoIncontro
 import blog.argosnewdreams.argo.registrazione.RegistrazioneInCorso
@@ -43,6 +44,13 @@ class ArgoApp : Application() {
         elaborazione = Elaborazione(archivio, impostazioni, modelloLocale, assets, ambito)
         registrazione = RegistrazioneInCorso(this, archivio, elaborazione, ambito)
         creaCanaleNotifiche()
+        // Elaborazione in corso → servizio in primo piano con la fase nell'avviso; finita → via.
+        ambito.launch {
+            elaborazione.fasi.collect { fasi ->
+                if (fasi.isEmpty()) ServizioElaborazione.ferma(this@ArgoApp)
+                else ServizioElaborazione.aggiorna(this@ArgoApp, fasi.values.first())
+            }
+        }
 
         ambito.launch(Dispatchers.IO) {
             runCatching { archivio.carica() }.onFailure { Log.e("Argo", "Archivio non leggibile", it) }
@@ -58,10 +66,15 @@ class ArgoApp : Application() {
             description = "Avviso fisso mentre Argo registra un incontro"
             setShowBadge(false)
         }
-        getSystemService(NotificationManager::class.java).createNotificationChannel(canale)
+        val canaleElaborazione = NotificationChannel(CANALE_ELABORAZIONE, "Elaborazione degli incontri", NotificationManager.IMPORTANCE_LOW).apply {
+            description = "Avviso fisso mentre Argo trascrive un incontro sul telefono"
+            setShowBadge(false)
+        }
+        getSystemService(NotificationManager::class.java).createNotificationChannels(listOf(canale, canaleElaborazione))
     }
 
     companion object {
         const val CANALE_REGISTRAZIONE = "registrazione"
+        const val CANALE_ELABORAZIONE = "elaborazione"
     }
 }
