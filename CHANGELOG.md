@@ -5,12 +5,16 @@ Versioni: `versionName` (semver) + build `AAAAMMGG.HHMM` (ora di Roma).
 
 ## [0.2.4] · build (al prossimo invio)
 
-Gli incontri lunghi si elaborano anche a schermo spento.
+Gli incontri lunghi si elaborano anche a schermo spento, e in Impostazioni trovi il testo completo delle licenze.
+
+### Aggiunto
+- **Licenze e riconoscimenti** in Impostazioni › Crediti: testo completo di Apache 2.0 (sherpa-onnx, AndroidX), MIT (ONNX Runtime, Silero VAD) e attribuzione CC BY 4.0 di NVIDIA Parakeet, con link alla licenza.
 
 ### Corretto
 - **Elaborazione a schermo spento o con un'altra app davanti.** Durante la trascrizione dal file e la lettura delle foto, Argo ora tiene un servizio in primo piano, con l'avviso fisso «Argo sta elaborando l'incontro» e la fase in corso. Prima, con lo schermo spento, Android poteva sospendere o chiudere Argo a metà di un incontro lungo. Il servizio è di tipo *mediaProcessing* da Android 15 (fino a 6 ore ogni 24) e *dataSync* prima; tiene il processore acceso, lo schermo no. Se Android non lo lascia partire, il lavoro continua finché l'app resta aperta. Lo stesso problema era stato trovato sull'iPhone; su Android l'elaborazione era già indipendente dalla schermata.
 
 ### Da provare
+- Impostazioni › Crediti › Licenze e riconoscimenti: il testo si apre e si scorre fino in fondo
 - Registra un incontro di almeno 10 minuti con la trascrizione dopo la registrazione, spegni lo schermo: l'avviso «Argo sta elaborando l'incontro» resta e alla riaccensione l'incontro è pronto
 
 ## [0.2.3] · build 20261118.1159

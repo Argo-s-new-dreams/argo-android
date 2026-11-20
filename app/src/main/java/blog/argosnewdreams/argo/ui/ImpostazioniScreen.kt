@@ -105,12 +105,39 @@ fun ImpostazioniScreen(app: ArgoApp, indietro: () -> Unit) {
                     "sherpa-onnx (Apache 2.0) e Silero VAD (MIT). Trascrizione e testo delle foto anche con Google ML Kit.",
                 style = MaterialTheme.typography.bodySmall, color = Argo.colori.tenue,
             )
+            LicenzeRiga()
 
             Sezione("Informazioni")
             Text("Argo per Android ${BuildConfig.VERSION_NAME} · build ${BuildConfig.BUILD_ARGO}", style = MaterialTheme.typography.bodyMedium)
             Text("Argo's New Dreams · argosnewdreams.blog", style = MaterialTheme.typography.bodySmall, color = Argo.colori.tenue)
             Spacer(Modifier.size(24.dp))
         }
+    }
+}
+
+/** Testo completo delle licenze di terze parti (assets/licenze_terze_parti.txt, come THIRD_PARTY_LICENSES.md). */
+@Composable
+private fun LicenzeRiga() {
+    val contesto = androidx.compose.ui.platform.LocalContext.current
+    var aperto by remember { mutableStateOf(false) }
+    androidx.compose.material3.TextButton(onClick = { aperto = true }) { Text("Licenze e riconoscimenti") }
+    if (aperto) {
+        val testo = remember {
+            runCatching { contesto.assets.open("licenze_terze_parti.txt").bufferedReader().use { it.readText() } }
+                .getOrDefault("Testo delle licenze non trovato: lo trovi su github.com/Argo-s-new-dreams/argo-android (THIRD_PARTY_LICENSES.md).")
+        }
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { aperto = false },
+            title = { Text("Licenze e riconoscimenti") },
+            text = {
+                Text(
+                    testo,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.verticalScroll(rememberScrollState()),
+                )
+            },
+            confirmButton = { androidx.compose.material3.TextButton(onClick = { aperto = false }) { Text("Chiudi") } },
+        )
     }
 }
 

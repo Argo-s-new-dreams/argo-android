@@ -8,4 +8,6 @@
 | Google ML Kit (GenAI Speech Recognition, Text Recognition) | Trascrizione Avanzata/Base e OCR delle foto | [Termini ML Kit](https://developers.google.com/ml-kit/terms) | Google Maven |
 | AndroidX, Jetpack Compose, CameraX, Kotlin, kotlinx | Interfaccia, fotocamera, coroutine, serializzazione | Apache 2.0 | Google Maven, Maven Central |
 
-Attribuzione richiesta da CC-BY-4.0: *Parakeet TDT 0.6B v3* © NVIDIA, usato in versione quantizzata int8 senza altre modifiche. Il testo è riportato anche nell'app (Impostazioni › Crediti).
+Attribuzione richiesta da CC-BY-4.0: *Parakeet TDT 0.6B v3* © NVIDIA, usato in versione quantizzata int8 senza altre modifiche. Licenza: https://creativecommons.org/licenses/by/4.0/. Il testo completo di tutte le licenze (Apache 2.0, MIT di ONNX Runtime e Silero VAD) è in [`app/src/main/assets/licenze_terze_parti.txt`](app/src/main/assets/licenze_terze_parti.txt) e nell'app in Impostazioni › Crediti › Licenze e riconoscimenti.
+
+**Quando aggiungi una dipendenza o un modello:** aggiorna questa tabella e `licenze_terze_parti.txt`.
