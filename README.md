@@ -1,6 +1,6 @@
 # Argo per Android · Taccuino
 
-Il fratello Android di [Argo per iPhone](https://github.com/LucaBorio69/argo-ios) e di [Argo · Cassetta degli attrezzi AI](https://github.com/Argo-s-new-dreams/argo-ai): **un taccuino per riunioni e fiere**. Registri la conversazione, fotografi biglietti da visita e documenti mentre parli, e Argo trascrive sul telefono, aggancia ogni foto al momento giusto e non lascia l'audio sul telefono. Niente cloud, niente account.
+Il fratello Android di [Argo per iPhone](https://github.com/Argo-s-new-dreams/argo-ios) e di [Argo · Cassetta degli attrezzi AI](https://github.com/Argo-s-new-dreams/argo-ai): **un taccuino per riunioni e fiere**. Registri la conversazione, fotografi biglietti da visita e documenti mentre parli, e Argo trascrive sul telefono, aggancia ogni foto al momento giusto e non lascia l'audio sul telefono. Niente cloud, niente account.
 
 > *Non è un registratore. È una stenografa digitale locale.* Ascolta solo mentre la usi, trascrive sul telefono, non conserva la voce, non invia la conversazione a un cloud, non profila gli interlocutori e lascia a te il controllo del testo prodotto.
 
@@ -100,7 +100,7 @@ app/src/main/java/blog/argosnewdreams/argo/
 
 ## Formato del pacchetto
 
-Lo stesso dell'iPhone: [argo-ios › docs/FORMATO-PACCHETTO.md](https://github.com/LucaBorio69/argo-ios/blob/main/docs/FORMATO-PACCHETTO.md). Il campo `app` vale `Argo per Android <versione>`. Verificato con il codice di Argo desktop (`ponte.importa_pacchetto` e `relazione_incontro.cronologia`): importazione, reimportazione idempotente, cronologia di parole e foto.
+Lo stesso dell'iPhone: [argo-ios › docs/FORMATO-PACCHETTO.md](https://github.com/Argo-s-new-dreams/argo-ios/blob/main/docs/FORMATO-PACCHETTO.md). Il campo `app` vale `Argo per Android <versione>`. Verificato con il codice di Argo desktop (`ponte.importa_pacchetto` e `relazione_incontro.cronologia`): importazione, reimportazione idempotente, cronologia di parole e foto.
 
 ## Roadmap
 
