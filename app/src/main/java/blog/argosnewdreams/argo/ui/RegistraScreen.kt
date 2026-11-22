@@ -1,5 +1,7 @@
 package blog.argosnewdreams.argo.ui
 
+import blog.argosnewdreams.argo.R
+import androidx.compose.ui.res.stringResource
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
@@ -118,6 +120,8 @@ private fun Preparazione(app: ArgoApp, indietro: () -> Unit) {
     var lingua by remember(linguaPredefinita) { mutableStateOf(linguaPredefinita) }
     var errore by remember { mutableStateOf<String?>(null) }
     val motore = rememberStatoMotore(app, lingua, modalita)
+    val testoErroreAvvio = stringResource(R.string.errore_avvio_registrazione)
+    val testoServeMicrofono = stringResource(R.string.serve_microfono)
 
     fun avvia() {
         try {
@@ -125,20 +129,20 @@ private fun Preparazione(app: ArgoApp, indietro: () -> Unit) {
             app.registrazione.avvia(lingua, motore.consegna())
         } catch (e: Exception) {
             motore.consegnato = false
-            errore = e.message ?: "Non riesco ad avviare la registrazione."
+            errore = e.message ?: testoErroreAvvio
         }
     }
 
     val permessi = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { esiti ->
         if (esiti[Manifest.permission.RECORD_AUDIO] == true) avvia()
-        else errore = "Serve l'accesso al microfono: lo trovi in Impostazioni › App › Argo › Autorizzazioni."
+        else errore = testoServeMicrofono
     }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Prima di registrare") },
-                navigationIcon = { IconButton(onClick = indietro) { Icon(Icons.Outlined.Close, contentDescription = "Chiudi") } },
+                title = { Text(stringResource(R.string.prima_di_registrare)) },
+                navigationIcon = { IconButton(onClick = indietro) { Icon(Icons.Outlined.Close, contentDescription = stringResource(R.string.chiudi)) } },
             )
         },
     ) { margini ->
@@ -146,15 +150,15 @@ private fun Preparazione(app: ArgoApp, indietro: () -> Unit) {
             Modifier.padding(margini).fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 24.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            Punto(Icons.Outlined.Campaign, "Avvisa chi hai di fronte che la conversazione viene registrata e trascritta con l'AI, e chiedi il consenso.")
-            Punto(Icons.Outlined.CloudOff, "Audio, trascrizione e foto restano su questo telefono. La relazione la scrive Argo sul tuo computer: mai servizi cloud.")
-            Punto(Icons.Outlined.DeleteOutline, "L'audio viene eliminato appena trascritto: restano testo e foto.")
-            Punto(Icons.Outlined.VerifiedUser, "La relazione generata dall'AI va riletta prima di condividerla.")
+            Punto(Icons.Outlined.Campaign, stringResource(R.string.punto_consenso))
+            Punto(Icons.Outlined.CloudOff, stringResource(R.string.punto_locale))
+            Punto(Icons.Outlined.DeleteOutline, stringResource(R.string.punto_audio))
+            Punto(Icons.Outlined.VerifiedUser, stringResource(R.string.punto_rileggi))
 
-            Text("Lingua dell'incontro", style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(top = 8.dp))
+            Text(stringResource(R.string.lingua_incontro), style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(top = 8.dp))
             LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                items(MotoreTrascrizione.lingueProposte) { (codice, nome) ->
-                    FilterChip(selected = codice == lingua, onClick = { lingua = codice }, label = { Text(nome) })
+                items(MotoreTrascrizione.lingueProposte) { codice ->
+                    FilterChip(selected = codice == lingua, onClick = { lingua = codice }, label = { Text(MotoreTrascrizione.nomeLingua(codice)) })
                 }
             }
 
@@ -174,7 +178,7 @@ private fun Preparazione(app: ArgoApp, indietro: () -> Unit) {
                 enabled = motore.stato != null,
                 modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 24.dp).height(52.dp),
             ) {
-                Text("Ho informato i partecipanti · Registra")
+                Text(stringResource(R.string.registra_consenso))
             }
         }
     }
@@ -182,8 +186,8 @@ private fun Preparazione(app: ArgoApp, indietro: () -> Unit) {
     errore?.let { messaggio ->
         AlertDialog(
             onDismissRequest = { errore = null },
-            confirmButton = { TextButton(onClick = { errore = null }) { Text("OK") } },
-            title = { Text("Attenzione") },
+            confirmButton = { TextButton(onClick = { errore = null }) { Text(stringResource(R.string.ok)) } },
+            title = { Text(stringResource(R.string.attenzione)) },
             text = { Text(messaggio) },
         )
     }
@@ -231,12 +235,12 @@ private fun PannelloRegistrazione(app: ArgoApp, indietro: () -> Unit, alTermine:
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(if (inPausa) "In pausa" else "Sto registrando") },
+                title = { Text(if (inPausa) stringResource(R.string.in_pausa) else stringResource(R.string.sto_registrando)) },
                 navigationIcon = {
-                    IconButton(onClick = indietro) { Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "Torna agli incontri, la registrazione continua") }
+                    IconButton(onClick = indietro) { Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = stringResource(R.string.torna_agli_incontri)) }
                 },
                 actions = {
-                    TextButton(onClick = { confermaScarta = true }) { Text("Scarta") }
+                    TextButton(onClick = { confermaScarta = true }) { Text(stringResource(R.string.scarta)) }
                 },
             )
         },
@@ -250,8 +254,8 @@ private fun PannelloRegistrazione(app: ArgoApp, indietro: () -> Unit, alTermine:
             )
             MisuratoreLivello(if (inPausa) 0f else livello, Modifier.fillMaxWidth().height(48.dp))
             Text(
-                if (attiva?.dalVivo == true) "Trascrivo sul telefono mentre parli · l'audio viene eliminato dopo"
-                else "Registro · la trascrizione partirà a fine incontro",
+                if (attiva?.dalVivo == true) stringResource(R.string.trascrivo_dal_vivo)
+                else stringResource(R.string.trascrivo_dopo),
                 style = MaterialTheme.typography.bodySmall,
                 color = Argo.colori.tenue,
                 modifier = Modifier.align(Alignment.CenterHorizontally).padding(vertical = 8.dp),
@@ -282,7 +286,7 @@ private fun PannelloRegistrazione(app: ArgoApp, indietro: () -> Unit, alTermine:
                         val id = attiva?.id
                         val miniatura = remember(f.nomeFile) { id?.let { LettoreFoto.miniatura(app.archivio.fileFoto(it, f.nomeFile), 128) } }
                         Box(Modifier.size(56.dp).clip(RoundedCornerShape(10.dp))) {
-                            miniatura?.let { Image(it.asImageBitmap(), contentDescription = "Foto al minuto ${Formato.durata(f.secondo)}", contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize()) }
+                            miniatura?.let { Image(it.asImageBitmap(), contentDescription = stringResource(R.string.foto_al_minuto, Formato.durata(f.secondo)), contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize()) }
                         }
                     }
                 }
@@ -299,7 +303,7 @@ private fun PannelloRegistrazione(app: ArgoApp, indietro: () -> Unit, alTermine:
                 ) {
                     Icon(
                         if (inPausa) Icons.Outlined.PlayArrow else Icons.Outlined.Pause,
-                        contentDescription = if (inPausa) "Riprendi la registrazione" else "Metti in pausa",
+                        contentDescription = if (inPausa) stringResource(R.string.riprendi_registrazione) else stringResource(R.string.metti_in_pausa),
                         modifier = Modifier.size(30.dp),
                     )
                 }
@@ -317,10 +321,10 @@ private fun PannelloRegistrazione(app: ArgoApp, indietro: () -> Unit, alTermine:
                     colors = IconButtonDefaults.filledIconButtonColors(containerColor = MaterialTheme.colorScheme.primary),
                 ) {
                     if (fermando) CircularProgressIndicator(Modifier.size(28.dp), color = MaterialTheme.colorScheme.onPrimary, strokeWidth = 3.dp)
-                    else Icon(Icons.Outlined.Stop, contentDescription = "Ferma e salva l'incontro", modifier = Modifier.size(38.dp))
+                    else Icon(Icons.Outlined.Stop, contentDescription = stringResource(R.string.ferma_e_salva), modifier = Modifier.size(38.dp))
                 }
                 FilledTonalIconButton(onClick = apriFotocamera, modifier = Modifier.size(68.dp)) {
-                    Icon(Icons.Outlined.PhotoCamera, contentDescription = "Scatta una foto", modifier = Modifier.size(30.dp))
+                    Icon(Icons.Outlined.PhotoCamera, contentDescription = stringResource(R.string.scatta_foto), modifier = Modifier.size(30.dp))
                 }
             }
         }
@@ -329,15 +333,15 @@ private fun PannelloRegistrazione(app: ArgoApp, indietro: () -> Unit, alTermine:
     if (confermaScarta) {
         AlertDialog(
             onDismissRequest = { confermaScarta = false },
-            title = { Text("Scartare la registrazione?") },
-            text = { Text("Audio, trascrizione e foto di questo incontro verranno eliminati.") },
+            title = { Text(stringResource(R.string.scartare_registrazione)) },
+            text = { Text(stringResource(R.string.scartare_spiegazione)) },
             confirmButton = {
                 TextButton(onClick = {
                     confermaScarta = false
                     ambito.launch { reg.scarta(); indietro() }
-                }) { Text("Scarta", color = MaterialTheme.colorScheme.error) }
+                }) { Text(stringResource(R.string.scarta), color = MaterialTheme.colorScheme.error) }
             },
-            dismissButton = { TextButton(onClick = { confermaScarta = false }) { Text("Continua a registrare") } },
+            dismissButton = { TextButton(onClick = { confermaScarta = false }) { Text(stringResource(R.string.continua_a_registrare)) } },
         )
     }
 }

@@ -1,5 +1,7 @@
 package blog.argosnewdreams.argo.trascrizione
 
+import blog.argosnewdreams.argo.Testi
+import blog.argosnewdreams.argo.R
 import blog.argosnewdreams.argo.modello.Segmento
 import com.google.mlkit.genai.common.audio.AudioSource
 import com.google.mlkit.genai.speechrecognition.SpeechRecognizerResponse
@@ -30,7 +32,7 @@ object TrascrizioneDaFile {
         }
         val segmenti = Segmentatore.distribuisci(testi, durata)
         if (segmenti.isEmpty()) {
-            throw ErroreTrascrizione(errore?.message?.let { "Trascrizione non riuscita: $it" } ?: "Non ho trovato parlato nella registrazione.")
+            throw ErroreTrascrizione(errore?.message?.let { Testi.t(R.string.trascrizione_non_riuscita, it) } ?: Testi.t(R.string.nessun_parlato))
         }
         return segmenti
     }

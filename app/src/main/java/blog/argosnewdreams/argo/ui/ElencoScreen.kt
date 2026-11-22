@@ -1,5 +1,7 @@
 package blog.argosnewdreams.argo.ui
 
+import blog.argosnewdreams.argo.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -61,9 +63,9 @@ fun ElencoScreen(app: ArgoApp, apriIncontro: (String) -> Unit, registra: () -> U
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Incontri") },
+                title = { Text(stringResource(R.string.incontri)) },
                 actions = {
-                    IconButton(onClick = impostazioni) { Icon(Icons.Outlined.Settings, contentDescription = "Impostazioni") }
+                    IconButton(onClick = impostazioni) { Icon(Icons.Outlined.Settings, contentDescription = stringResource(R.string.impostazioni)) }
                 },
             )
         },
@@ -71,7 +73,7 @@ fun ElencoScreen(app: ArgoApp, apriIncontro: (String) -> Unit, registra: () -> U
             ExtendedFloatingActionButton(
                 onClick = registra,
                 icon = { Icon(Icons.Outlined.Mic, contentDescription = null) },
-                text = { Text(if (attiva != null) "Torna alla registrazione" else "Registra") },
+                text = { Text(if (attiva != null) stringResource(R.string.torna_alla_registrazione) else stringResource(R.string.registra)) },
             )
         },
     ) { margini ->
@@ -84,7 +86,7 @@ fun ElencoScreen(app: ArgoApp, apriIncontro: (String) -> Unit, registra: () -> U
                     Row(Modifier.padding(horizontal = 16.dp, vertical = 12.dp), verticalAlignment = Alignment.CenterVertically) {
                         Surface(color = MaterialTheme.colorScheme.primary, shape = CircleShape, modifier = Modifier.size(10.dp)) {}
                         Spacer(Modifier.width(10.dp))
-                        Text("Registrazione in corso · ${Formato.durata(durata)}", style = MaterialTheme.typography.bodyMedium)
+                        Text(stringResource(R.string.registrazione_in_corso_durata, Formato.durata(durata)), style = MaterialTheme.typography.bodyMedium)
                     }
                 }
             }
@@ -96,11 +98,10 @@ fun ElencoScreen(app: ArgoApp, apriIncontro: (String) -> Unit, registra: () -> U
                 ) {
                     Icon(Icons.Outlined.Mic, contentDescription = null, tint = Argo.colori.tenue, modifier = Modifier.size(48.dp))
                     Spacer(Modifier.height(16.dp))
-                    Text("Nessun incontro", style = MaterialTheme.typography.titleLarge)
+                    Text(stringResource(R.string.nessun_incontro), style = MaterialTheme.typography.titleLarge)
                     Spacer(Modifier.height(8.dp))
                     Text(
-                        "Tocca Registra: Argo trascrive mentre parli, aggancia le foto al momento giusto " +
-                            "e non lascia l'audio sul telefono.",
+                        stringResource(R.string.nessun_incontro_spiegazione),
                         style = MaterialTheme.typography.bodyMedium,
                         color = Argo.colori.tenue,
                         textAlign = TextAlign.Center,
@@ -137,10 +138,11 @@ private fun RigaIncontro(incontro: Incontro, fase: String?, apri: () -> Unit) {
                     overflow = TextOverflow.Ellipsis,
                 )
                 Spacer(Modifier.height(4.dp))
+                val nFoto = stringResource(R.string.n_foto, incontro.foto.size)
                 val dettagli = buildList {
                     add(Formato.dataBreve(incontro.creata))
                     add(Formato.durata(incontro.durata))
-                    if (incontro.foto.isNotEmpty()) add("${incontro.foto.size} foto")
+                    if (incontro.foto.isNotEmpty()) add(nFoto)
                 }.joinToString(" · ")
                 Text(dettagli, style = MaterialTheme.typography.bodySmall, color = Argo.colori.tenue)
                 if (fase != null) {
@@ -156,11 +158,11 @@ private fun RigaIncontro(incontro: Incontro, fase: String?, apri: () -> Unit) {
 @Composable
 private fun IconaStato(incontro: Incontro, inElaborazione: Boolean) {
     val (icona, colore, descrizione) = when {
-        inElaborazione -> Triple(null, MaterialTheme.colorScheme.primary, "In elaborazione")
-        incontro.stato == StatoIncontro.ERRORE -> Triple(Icons.Outlined.ErrorOutline, Argo.colori.errore, "Da sistemare")
+        inElaborazione -> Triple(null, MaterialTheme.colorScheme.primary, stringResource(R.string.stato_in_elaborazione))
+        incontro.stato == StatoIncontro.ERRORE -> Triple(Icons.Outlined.ErrorOutline, Argo.colori.errore, stringResource(R.string.stato_da_sistemare))
         incontro.stato == StatoIncontro.TRASCRITTO || incontro.stato == StatoIncontro.COMPLETATO ->
-            Triple(Icons.Outlined.TaskAlt, Argo.colori.ok, "Trascritto")
-        else -> Triple(Icons.Outlined.Timelapse, Argo.colori.avviso, "In attesa")
+            Triple(Icons.Outlined.TaskAlt, Argo.colori.ok, stringResource(R.string.stato_trascritto))
+        else -> Triple(Icons.Outlined.Timelapse, Argo.colori.avviso, stringResource(R.string.stato_in_attesa))
     }
     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.semantics { contentDescription = descrizione }) {
         if (incontro.foto.isNotEmpty()) {

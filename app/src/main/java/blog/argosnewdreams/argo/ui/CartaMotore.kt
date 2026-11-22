@@ -1,5 +1,7 @@
 package blog.argosnewdreams.argo.ui
 
+import blog.argosnewdreams.argo.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -84,7 +86,7 @@ fun motoreDi(stato: StatoModello?): Motore? = when (stato) {
 
 /** Cosa può fare la trascrizione su questo telefono, con il download quando serve. */
 @Composable
-fun CartaMotore(app: ArgoApp, statoMotore: StatoMotore, contesto: String = "registrare") {
+fun CartaMotore(app: ArgoApp, statoMotore: StatoMotore) {
     val ambito = rememberCoroutineScope()
     val locale by app.modelloLocale.stato.collectAsState()
     var downloadGoogle by remember { mutableStateOf<Int?>(null) }
@@ -113,23 +115,22 @@ fun CartaMotore(app: ArgoApp, statoMotore: StatoMotore, contesto: String = "regi
                 null -> Row(verticalAlignment = Alignment.CenterVertically) {
                     CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
                     Spacer(Modifier.width(12.dp))
-                    Text("Controllo la trascrizione sul telefono…")
+                    Text(stringResource(R.string.controllo_trascrizione))
                 }
                 is StatoModello.Pronto -> {
-                    Text("Trascrizione dal vivo pronta", fontWeight = FontWeight.Medium, color = Argo.colori.ok)
-                    Text("${s.motore.nome} · vedrai il testo mentre parli.", style = MaterialTheme.typography.bodySmall, color = Argo.colori.tenue)
+                    Text(stringResource(R.string.dal_vivo_pronta), fontWeight = FontWeight.Medium, color = Argo.colori.ok)
+                    Text(stringResource(R.string.dal_vivo_pronta_desc, s.motore.nome), style = MaterialTheme.typography.bodySmall, color = Argo.colori.tenue)
                 }
                 is StatoModello.DaScaricare, is StatoModello.InDownload -> {
                     val motore = motoreDi(s)!!
                     val isLocale = motore is Motore.Locale
                     Text(
-                        if (isLocale) "Argo locale: modello da scaricare" else "Il modello della lingua non è ancora sul telefono",
+                        if (isLocale) stringResource(R.string.locale_da_scaricare) else stringResource(R.string.lingua_da_scaricare),
                         fontWeight = FontWeight.Medium, color = Argo.colori.avviso,
                     )
                     Text(
-                        if (isLocale) "${ModelloLocale.NOME}, circa ${ModelloLocale.MEGABYTE} MB, una volta sola (meglio in Wi-Fi). " +
-                            "Poi trascrive offline, anche in fiera. Puoi $contesto subito: la trascrizione partirà a fine incontro, quando il modello c'è."
-                        else "Scaricalo ora (serve la rete, una volta sola). Puoi $contesto subito: la trascrizione partirà a fine incontro.",
+                        if (isLocale) stringResource(R.string.locale_da_scaricare_desc, ModelloLocale.NOME, ModelloLocale.MEGABYTE)
+                        else stringResource(R.string.lingua_da_scaricare_desc),
                         style = MaterialTheme.typography.bodySmall, color = Argo.colori.tenue,
                     )
                     val inCorsoLocale = isLocale && locale is ModelloLocale.Stato.InDownload
@@ -138,7 +139,7 @@ fun CartaMotore(app: ArgoApp, statoMotore: StatoMotore, contesto: String = "regi
                             val p = (locale as ModelloLocale.Stato.InDownload)
                             LinearProgressIndicator(progress = { p.percentuale / 100f }, modifier = Modifier.fillMaxWidth())
                             Text(
-                                "${p.byteScaricati / 1_000_000} di ${ModelloLocale.MEGABYTE} MB · continua anche se chiudi questa schermata",
+                                stringResource(R.string.avanzamento_download, (p.byteScaricati / 1_000_000).toInt(), ModelloLocale.MEGABYTE),
                                 style = MaterialTheme.typography.bodySmall, color = Argo.colori.tenue,
                             )
                         }
@@ -151,7 +152,7 @@ fun CartaMotore(app: ArgoApp, statoMotore: StatoMotore, contesto: String = "regi
                         }) {
                             Icon(Icons.Outlined.Download, contentDescription = null)
                             Spacer(Modifier.width(8.dp))
-                            Text(if (isLocale) "Scarica Argo locale (${ModelloLocale.MEGABYTE} MB)" else "Scarica il modello")
+                            Text(if (isLocale) stringResource(R.string.scarica_locale, ModelloLocale.MEGABYTE) else stringResource(R.string.scarica_modello))
                         }
                     }
                     if (isLocale && locale is ModelloLocale.Stato.Errore) {
@@ -160,10 +161,10 @@ fun CartaMotore(app: ArgoApp, statoMotore: StatoMotore, contesto: String = "regi
                     if (isLocale && confermaDati) {
                         AlertDialog(
                             onDismissRequest = { confermaDati = false },
-                            title = { Text("Stai usando i dati mobili") },
-                            text = { Text("Il modello pesa circa ${ModelloLocale.MEGABYTE} MB. Meglio aspettare il Wi-Fi, ma se vuoi si scarica anche adesso.") },
-                            confirmButton = { TextButton(onClick = { confermaDati = false; avviaDownload(motore) }) { Text("Scarica comunque") } },
-                            dismissButton = { TextButton(onClick = { confermaDati = false }) { Text("Aspetto il Wi-Fi") } },
+                            title = { Text(stringResource(R.string.dati_mobili)) },
+                            text = { Text(stringResource(R.string.dati_mobili_desc, ModelloLocale.MEGABYTE)) },
+                            confirmButton = { TextButton(onClick = { confermaDati = false; avviaDownload(motore) }) { Text(stringResource(R.string.scarica_comunque)) } },
+                            dismissButton = { TextButton(onClick = { confermaDati = false }) { Text(stringResource(R.string.aspetto_wifi)) } },
                         )
                     }
                 }
@@ -171,7 +172,7 @@ fun CartaMotore(app: ArgoApp, statoMotore: StatoMotore, contesto: String = "regi
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(Icons.Outlined.WarningAmber, contentDescription = null, tint = Argo.colori.avviso)
                         Spacer(Modifier.width(8.dp))
-                        Text("Trascrizione non disponibile", fontWeight = FontWeight.Medium, color = Argo.colori.avviso)
+                        Text(stringResource(R.string.trascrizione_non_disponibile), fontWeight = FontWeight.Medium, color = Argo.colori.avviso)
                     }
                     Text(s.motivo, style = MaterialTheme.typography.bodySmall, color = Argo.colori.tenue)
                 }

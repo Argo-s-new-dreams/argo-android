@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Deutsch. Gleiche Schlüssel wie values/strings.xml (Italienisch, Basissprache). -->
+<resources>
+    <!-- Allgemein -->
+    <string name="ok">OK</string>
+    <string name="annulla">Abbrechen</string>
+    <string name="chiudi">Schließen</string>
+    <string name="salva">Speichern</string>
+    <string name="elimina">Löschen</string>
+    <string name="indietro">Zurück</string>
+    <string name="condividi">Teilen</string>
+    <string name="riprova">Erneut versuchen</string>
+    <string name="attenzione">Achtung</string>
+    <string name="n_foto">%1$d Fotos</string>
+    <string name="nome_app_versione">Argo für Android %1$s</string>
+
+    <!-- Liste -->
+    <string name="incontri">Termine</string>
+    <string name="impostazioni">Einstellungen</string>
+    <string name="registra">Aufnehmen</string>
+    <string name="torna_alla_registrazione">Zurück zur Aufnahme</string>
+    <string name="registrazione_in_corso_durata">Aufnahme läuft · %1$s</string>
+    <string name="nessun_incontro">Noch keine Termine</string>
+    <string name="nessun_incontro_spiegazione">Tippe auf Aufnehmen: Argo transkribiert, während du sprichst, verknüpft die Fotos mit dem richtigen Moment und lässt das Audio nicht auf dem Telefon.</string>
+    <string name="stato_in_elaborazione">Wird verarbeitet</string>
+    <string name="stato_da_sistemare">Prüfen</string>
+    <string name="stato_trascritto">Transkribiert</string>
+    <string name="stato_in_attesa">Wartet</string>
+
+    <!-- Vor der Aufnahme -->
+    <string name="prima_di_registrare">Vor der Aufnahme</string>
+    <string name="punto_consenso">Sag deinem Gegenüber, dass das Gespräch aufgenommen und mit KI transkribiert wird, und bitte um Zustimmung.</string>
+    <string name="punto_locale">Audio, Transkript und Fotos bleiben auf diesem Telefon. Den Bericht schreibt Argo auf deinem Computer: nie Cloud-Dienste.</string>
+    <string name="punto_audio">Das Audio wird gelöscht, sobald es transkribiert ist: Text und Fotos bleiben.</string>
+    <string name="punto_rileggi">Lies den von der KI erstellten Bericht, bevor du ihn teilst.</string>
+    <string name="lingua_incontro">Sprache des Termins</string>
+    <string name="registra_consenso">Ich habe die Teilnehmer informiert · Aufnehmen</string>
+    <string name="errore_avvio_registrazione">Ich kann die Aufnahme nicht starten.</string>
+    <string name="serve_microfono">Argo braucht Zugriff auf das Mikrofon: Du findest ihn unter Einstellungen › Apps › Argo › Berechtigungen.</string>
+
+    <!-- Während der Aufnahme -->
+    <string name="in_pausa">Pausiert</string>
+    <string name="sto_registrando">Aufnahme läuft</string>
+    <string name="torna_agli_incontri">Zurück zu den Terminen, die Aufnahme läuft weiter</string>
+    <string name="scarta">Verwerfen</string>
+    <string name="trascrivo_dal_vivo">Transkription auf dem Telefon, während du sprichst · das Audio wird danach gelöscht</string>
+    <string name="trascrivo_dopo">Aufnahme · die Transkription startet am Ende des Termins</string>
+    <string name="foto_al_minuto">Foto bei %1$s</string>
+    <string name="riprendi_registrazione">Aufnahme fortsetzen</string>
+    <string name="metti_in_pausa">Pausieren</string>
+    <string name="ferma_e_salva">Termin beenden und speichern</string>
+    <string name="scatta_foto">Foto aufnehmen</string>
+    <string name="scartare_registrazione">Aufnahme verwerfen?</string>
+    <string name="scartare_spiegazione">Audio, Transkript und Fotos dieses Termins werden gelöscht.</string>
+    <string name="continua_a_registrare">Weiter aufnehmen</string>
+
+    <!-- Kamera -->
+    <string name="serve_fotocamera">Argo braucht Zugriff auf die Kamera für die Fotos des Termins.</string>
+    <string name="consenti">Erlauben</string>
+    <string name="durata_foto">● %1$s · %2$d Fotos</string>
+    <string name="foto_agganciata">Foto bei %1$s verknüpft</string>
+    <string name="foto_non_salvata">Ich kann das Foto nicht speichern.</string>
+    <string name="scatto_non_riuscito">Das Foto konnte nicht aufgenommen werden.</string>
+
+    <!-- Termin -->
+    <string name="altre_azioni">Weitere Aktionen</string>
+    <string name="rinomina">Umbenennen</string>
+    <string name="condividi_testo">Text teilen</string>
+    <string name="elimina_incontro">Termin löschen</string>
+    <string name="qualcosa_non_va">Etwas hat nicht funktioniert.</string>
+    <string name="relazione_e_crm">Bericht und CRM in Argo auf dem Computer</string>
+    <string name="relazione_e_crm_spiegazione">Sende das Paket (Text und Fotos, nie das Audio) und importiere es in Argo: Termine › Paket importieren…. Dort entstehen der Bericht, der Kunde in Dynamics 365 und die Aufgaben.</string>
+    <string name="errore_pacchetto">Ich kann das Paket nicht vorbereiten: %1$s</string>
+    <string name="invia_ad_argo">An Argo auf dem Computer senden</string>
+    <string name="trascrizione">Transkription</string>
+    <string name="titolo_incontro">Titel des Termins</string>
+    <string name="titolo_esempio">z. B. Stand Rossi Automazione</string>
+    <string name="eliminare_incontro">Termin löschen?</string>
+    <string name="eliminare_incontro_spiegazione">Transkript und Fotos werden von diesem Telefon gelöscht. Was du schon an Argo auf dem Computer gesendet hast, bleibt dort.</string>
+    <string name="trascritto_con">transkribiert mit %1$s</string>
+    <string name="tempi_stimati">geschätzte Zeiten</string>
+    <string name="audio_eliminato">Audio gelöscht</string>
+    <string name="testo_da_leggere">Text wird noch gelesen…</string>
+    <string name="nessun_testo_leggibile">Kein lesbarer Text</string>
+    <string name="foto_incontro">Foto des Termins</string>
+    <string name="pacchetto_oggetto">Argo-Paket · %1$s</string>
+
+    <!-- Einstellungen -->
+    <string name="lingua_app">Sprache der App</string>
+    <string name="lingua_app_sistema">Wie das Telefon</string>
+    <string name="lingua_app_android12">Unter Android 12 verwendet Argo die Sprache des Telefons.</string>
+    <string name="lingua_predefinita">Standardsprache der Termine</string>
+    <string name="privacy">Datenschutz</string>
+    <string name="elimina_audio">Audio nach der Transkription löschen</string>
+    <string name="elimina_audio_spiegazione">Es bleiben nur Text und Fotos. Wenn die Transkription fehlschlägt, bleibt das Audio, bis du sie wiederholst.</string>
+    <string name="promessa">Argo ist kein Aufnahmegerät: Argo ist eine lokale digitale Stenografin. Argo hört nur zu, während du es benutzt, transkribiert auf dem Telefon, speichert die Stimme nicht, sendet das Gespräch an keine Cloud und lässt dir die Kontrolle über den Text. Termine sind vom Google-Backup ausgeschlossen.</string>
+    <string name="crediti">Danksagungen</string>
+    <string name="crediti_testo">Argo lokal verwendet NVIDIA Parakeet TDT 0.6B v3 (CC-BY-4.0, int8-Version für sherpa-onnx von k2-fsa), sherpa-onnx (Apache 2.0) und Silero VAD (MIT). Transkription und Fototext auch mit Google ML Kit.</string>
+    <string name="licenze">Lizenzen und Danksagungen</string>
+    <string name="licenze_non_trovate">Lizenztext nicht gefunden: Du findest ihn unter github.com/Argo-s-new-dreams/argo-android (THIRD_PARTY_LICENSES.md).</string>
+    <string name="informazioni">Info</string>
+    <string name="versione_build">Argo für Android %1$s · Build %2$s</string>
+    <string name="spazio_modello">Argo lokal belegt etwa %1$d MB auf dem Telefon.</string>
+    <string name="elimina_modello">Modell löschen</string>
+    <string name="eliminare_modello">Das Modell von Argo lokal löschen?</string>
+    <string name="eliminare_modello_spiegazione">Du gibst Speicher frei; um wieder mit Argo lokal zu transkribieren, muss es erneut heruntergeladen werden.</string>
+
+    <!-- Transkriptions-Engine -->
+    <string name="modalita_automatica">Automatisch</string>
+    <string name="modalita_automatica_desc">Erweitert (Google), wenn das Telefon es unterstützt, sonst Argo lokal</string>
+    <string name="modalita_locale">Argo lokal</string>
+    <string name="modalita_locale_desc">Parakeet-Modell in Argo: jedes Telefon mit Android 12+, etwa %1$d MB, einmal herunterzuladen</string>
+    <string name="modalita_avanzata">Erweitert (Google)</string>
+    <string name="modalita_avanzata_desc">Gemini Nano: nur neuere Telefone, z. B. Galaxy S26, Pixel 10</string>
+    <string name="modalita_base">Basis (Google)</string>
+    <string name="modalita_base_desc">Sprachmodell des Systems; manche Sprachen sind in der Beta und fehlen auf manchen Telefonen</string>
+    <string name="motore_android">Android · %1$s</string>
+    <string name="motore_locale">Argo lokal · %1$s</string>
+    <string name="controllo_trascrizione">Ich prüfe die Transkription auf dem Telefon…</string>
+    <string name="dal_vivo_pronta">Live-Transkription bereit</string>
+    <string name="dal_vivo_pronta_desc">%1$s · du siehst den Text, während du sprichst.</string>
+    <string name="locale_da_scaricare">Argo lokal: Modell herunterladen</string>
+    <string name="lingua_da_scaricare">Das Sprachmodell ist noch nicht auf dem Telefon</string>
+    <string name="locale_da_scaricare_desc">%1$s, etwa %2$d MB, nur einmal (besser im WLAN). Danach transkribiert es offline, auch auf der Messe. Du kannst sofort aufnehmen: Die Transkription startet am Ende des Termins, sobald das Modell da ist.</string>
+    <string name="lingua_da_scaricare_desc">Lade es jetzt herunter (Netz nötig, nur einmal). Du kannst sofort aufnehmen: Die Transkription startet am Ende des Termins.</string>
+    <string name="avanzamento_download">%1$d von %2$d MB · läuft weiter, auch wenn du diesen Bildschirm schließt</string>
+    <string name="scarica_locale">Argo lokal herunterladen (%1$d MB)</string>
+    <string name="scarica_modello">Modell herunterladen</string>
+    <string name="dati_mobili">Du nutzt mobile Daten</string>
+    <string name="dati_mobili_desc">Das Modell ist etwa %1$d MB groß. Besser auf das WLAN warten, aber wenn du willst, wird es auch jetzt heruntergeladen.</string>
+    <string name="scarica_comunque">Trotzdem herunterladen</string>
+    <string name="aspetto_wifi">Auf WLAN warten</string>
+    <string name="trascrizione_non_disponibile">Transkription nicht verfügbar</string>
+    <string name="google_non_disponibile">Die Google-Transkription ist auf diesem Telefon nicht verfügbar.\n%1$s\nWähle «Argo lokal» unter Einstellungen › Transkription.</string>
+    <string name="nessuna_risposta_mlkit">keine Antwort von ML Kit</string>
+    <string name="non_supportata_lingua">%1$s: auf diesem Telefon für %2$s nicht unterstützt</string>
+    <string name="download_google_fallito">Download des Modells fehlgeschlagen (%1$s). Eine Verbindung ist nötig: Versuche es in den Einstellungen erneut.</string>
+    <string name="errore_codice">Fehler %1$d</string>
+
+    <!-- Download von Argo lokal -->
+    <string name="download_non_riuscito">Download fehlgeschlagen.</string>
+    <string name="spazio_insufficiente">Nicht genug Speicher: %1$d MB frei nötig, %2$d verfügbar.</string>
+    <string name="impronta_errata">Die Datei %1$s entspricht nicht dem erwarteten Fingerabdruck: Ich habe sie gelöscht. Versuche den Download erneut.</string>
+    <string name="server_risponde">Der Server des Modells hat mit %1$d geantwortet.</string>
+    <string name="download_interrotto">Download von %1$s unterbrochen.</string>
+    <string name="rete_instabile">Instabiles Netz: Download von %1$s unterbrochen (%2$s). Versuche es später erneut, er wird dort fortgesetzt, wo er aufgehört hat.</string>
+
+    <!-- Transkription und Verarbeitung -->
+    <string name="preparo_modello">Ich bereite das Modell auf dem Telefon vor…</string>
+    <string name="trascrivo_ultimi_secondi">Ich transkribiere die letzten Sekunden…</string>
+    <string name="nessun_parlato">Ich habe in der Aufnahme keine Sprache gefunden.</string>
+    <string name="trascrizione_non_riuscita">Transkription fehlgeschlagen: %1$s</string>
+    <string name="errore_dal_vivo">Fehler der Live-Transkription.</string>
+    <string name="errore_trascrizione_codice">Fehler der Transkription (Code %1$d).</string>
+    <string name="problema_dal_vivo">Die Live-Transkription hatte zwischendurch ein Problem: %1$s</string>
+    <string name="microfono_non_accessibile">Ich kann nicht auf das Mikrofon zugreifen.</string>
+    <string name="registrazione_gia_in_corso">Es läuft bereits eine Aufnahme.</string>
+    <string name="fase_preparo">Vorbereitung…</string>
+    <string name="fase_trascrivo">Transkription auf dem Telefon…</string>
+    <string name="fase_trascrivo_percento">Transkription auf dem Telefon… %1$d %%</string>
+    <string name="fase_leggo_foto">Ich lese Foto %1$d von %2$d…</string>
+    <string name="avviso_tempi_stimati">Nach der Aufnahme transkribiert: Die Zeiten von Sätzen und Fotos sind geschätzt.</string>
+    <string name="modello_mancante">Das Transkriptionsmodell ist noch nicht auf dem Telefon. Lade es unter Einstellungen › Transkription herunter und tippe dann auf «Erneut versuchen». Das Audio bleibt, bis es transkribiert ist.</string>
+    <string name="elaborazione_non_riuscita">Verarbeitung fehlgeschlagen: %1$s</string>
+
+    <!-- Systemhinweise -->
+    <string name="canale_registrazione">Aufnahme läuft</string>
+    <string name="canale_registrazione_desc">Dauerhinweis, während Argo einen Termin aufnimmt</string>
+    <string name="canale_elaborazione">Verarbeitung der Termine</string>
+    <string name="canale_elaborazione_desc">Dauerhinweis, während Argo einen Termin auf dem Telefon transkribiert</string>
+    <string name="notifica_registra_titolo">Argo nimmt den Termin auf</string>
+    <string name="notifica_registra_testo">Transkription auf dem Telefon · das Audio wird danach gelöscht</string>
+    <string name="notifica_elabora_titolo">Argo verarbeitet den Termin</string>
+    <string name="notifica_elabora_testo">Auf dem Telefon, ohne Cloud</string>
+
+    <!-- Fehler beim Start -->
+    <string name="crash_titolo">Argo wurde wegen eines Fehlers geschlossen</string>
+    <string name="crash_oggetto">Fehler von Argo für Android</string>
+    <string name="crash_condividi">Fehler teilen</string>
+
+    <!-- Exportierter Text und Bericht -->
+    <string name="parlante_n">Sprecher %1$s</string>
+    <string name="incontro_del">Termin vom %1$s</string>
+    <string name="testo_nessun_testo">kein lesbarer Text</string>
+    <string name="testo_foto">FOTO</string>
+    <string name="md_riassunto">Zusammenfassung</string>
+    <string name="md_contatti">Kontakte</string>
+    <string name="md_punti_chiave">Kernpunkte</string>
+    <string name="md_azioni">Aufgaben</string>
+    <string name="md_trascrizione">Transkript</string>
+    <string name="md_relazione">Bericht: %1$s</string>
+    <string name="md_solo_trascrizione">nur Transkript</string>
+    <string name="md_generato">Erstellt mit %1$s · Transkription auf dem Gerät · %2$s</string>
+    <string name="md_entro">bis %1$s</string>
+    <string name="formato_data_lunga">d. MMMM yyyy \'um\' HH:mm</string>
+    <string name="formato_data_breve">d. MMM, HH:mm</string>
+</resources>

@@ -1,5 +1,7 @@
 package blog.argosnewdreams.argo.ui
 
+import blog.argosnewdreams.argo.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -100,23 +102,23 @@ fun IncontroScreen(app: ArgoApp, id: String, indietro: () -> Unit) {
         topBar = {
             TopAppBar(
                 title = { Text(incontro.titoloMostrato, maxLines = 1) },
-                navigationIcon = { IconButton(onClick = indietro) { Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "Indietro") } },
+                navigationIcon = { IconButton(onClick = indietro) { Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = stringResource(R.string.indietro)) } },
                 actions = {
-                    IconButton(onClick = { menu = true }) { Icon(Icons.Outlined.MoreVert, contentDescription = "Altre azioni") }
+                    IconButton(onClick = { menu = true }) { Icon(Icons.Outlined.MoreVert, contentDescription = stringResource(R.string.altre_azioni)) }
                     DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
                         DropdownMenuItem(
-                            text = { Text("Rinomina") },
+                            text = { Text(stringResource(R.string.rinomina)) },
                             leadingIcon = { Icon(Icons.Outlined.Edit, null) },
                             onClick = { menu = false; rinomina = true },
                         )
                         DropdownMenuItem(
-                            text = { Text("Condividi il testo") },
+                            text = { Text(stringResource(R.string.condividi_testo)) },
                             leadingIcon = { Icon(Icons.Outlined.Share, null) },
                             enabled = fase == null,
                             onClick = { menu = false; Condividi.testo(context, incontro) },
                         )
                         DropdownMenuItem(
-                            text = { Text("Elimina incontro", color = MaterialTheme.colorScheme.error) },
+                            text = { Text(stringResource(R.string.elimina_incontro), color = MaterialTheme.colorScheme.error) },
                             leadingIcon = { Icon(Icons.Outlined.DeleteOutline, null, tint = MaterialTheme.colorScheme.error) },
                             enabled = fase == null,
                             onClick = { menu = false; confermaElimina = true },
@@ -142,9 +144,9 @@ fun IncontroScreen(app: ArgoApp, id: String, indietro: () -> Unit) {
             }
 
             if (fase == null && incontro.stato == StatoIncontro.ERRORE) item {
-                Avviso(Icons.Outlined.ErrorOutline, Argo.colori.errore, incontro.messaggioErrore ?: "Qualcosa non ha funzionato.") {
+                Avviso(Icons.Outlined.ErrorOutline, Argo.colori.errore, incontro.messaggioErrore ?: stringResource(R.string.qualcosa_non_va)) {
                     OutlinedButton(onClick = { app.elaborazione.avvia(id) }) {
-                        Icon(Icons.Outlined.Refresh, null); Spacer(Modifier.width(8.dp)); Text("Riprova")
+                        Icon(Icons.Outlined.Refresh, null); Spacer(Modifier.width(8.dp)); Text(stringResource(R.string.riprova))
                     }
                 }
             }
@@ -153,29 +155,28 @@ fun IncontroScreen(app: ArgoApp, id: String, indietro: () -> Unit) {
             if (fase == null && (incontro.haTrascrizione || incontro.foto.isNotEmpty())) item {
                 Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)) {
                     Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Text("Relazione e CRM su Argo sul computer", fontWeight = FontWeight.Medium)
+                        Text(stringResource(R.string.relazione_e_crm), fontWeight = FontWeight.Medium)
                         Text(
-                            "Invia il pacchetto (testo e foto, mai l'audio) e importalo in Argo: Incontri › Importa pacchetto…. " +
-                                "Lì nascono la relazione, il cliente in Dynamics 365 e i task.",
+                            stringResource(R.string.relazione_e_crm_spiegazione),
                             style = MaterialTheme.typography.bodySmall, color = Argo.colori.tenue,
                         )
                         Button(
                             onClick = {
                                 ambito.launch {
                                     runCatching { Condividi.pacchetto(context, incontro) }
-                                        .onFailure { errore = "Non riesco a preparare il pacchetto: ${it.message}" }
+                                        .onFailure { errore = context.getString(R.string.errore_pacchetto, it.message.orEmpty()) }
                                 }
                             },
                             modifier = Modifier.fillMaxWidth(),
                         ) {
-                            Icon(Icons.Outlined.Computer, null); Spacer(Modifier.width(8.dp)); Text("Invia ad Argo sul computer")
+                            Icon(Icons.Outlined.Computer, null); Spacer(Modifier.width(8.dp)); Text(stringResource(R.string.invia_ad_argo))
                         }
                     }
                 }
             }
 
             if (incontro.cronologia.isNotEmpty()) item {
-                Text("Trascrizione", style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(top = 8.dp))
+                Text(stringResource(R.string.trascrizione), style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(top = 8.dp))
             }
             items(incontro.cronologia, key = { voce ->
                 when (voce) {
@@ -195,30 +196,30 @@ fun IncontroScreen(app: ArgoApp, id: String, indietro: () -> Unit) {
         var titolo by remember { mutableStateOf(incontro.titolo) }
         AlertDialog(
             onDismissRequest = { rinomina = false },
-            title = { Text("Titolo dell'incontro") },
-            text = { OutlinedTextField(titolo, { titolo = it }, singleLine = true, placeholder = { Text("es. Stand Rossi Automazione") }) },
+            title = { Text(stringResource(R.string.titolo_incontro)) },
+            text = { OutlinedTextField(titolo, { titolo = it }, singleLine = true, placeholder = { Text(stringResource(R.string.titolo_esempio)) }) },
             confirmButton = {
                 TextButton(onClick = {
                     rinomina = false
                     ambito.launch { app.archivio.aggiorna(id) { it.copy(titolo = titolo.trim()) } }
-                }) { Text("Salva") }
+                }) { Text(stringResource(R.string.salva)) }
             },
-            dismissButton = { TextButton(onClick = { rinomina = false }) { Text("Annulla") } },
+            dismissButton = { TextButton(onClick = { rinomina = false }) { Text(stringResource(R.string.annulla)) } },
         )
     }
 
     if (confermaElimina) {
         AlertDialog(
             onDismissRequest = { confermaElimina = false },
-            title = { Text("Eliminare l'incontro?") },
-            text = { Text("Trascrizione e foto verranno cancellate da questo telefono. Ciò che hai già inviato ad Argo sul computer resta lì.") },
+            title = { Text(stringResource(R.string.eliminare_incontro)) },
+            text = { Text(stringResource(R.string.eliminare_incontro_spiegazione)) },
             confirmButton = {
                 TextButton(onClick = {
                     confermaElimina = false
                     ambito.launch { app.archivio.elimina(id); indietro() }
-                }) { Text("Elimina", color = MaterialTheme.colorScheme.error) }
+                }) { Text(stringResource(R.string.elimina), color = MaterialTheme.colorScheme.error) }
             },
-            dismissButton = { TextButton(onClick = { confermaElimina = false }) { Text("Annulla") } },
+            dismissButton = { TextButton(onClick = { confermaElimina = false }) { Text(stringResource(R.string.annulla)) } },
         )
     }
 
@@ -227,7 +228,7 @@ fun IncontroScreen(app: ArgoApp, id: String, indietro: () -> Unit) {
     errore?.let { messaggio ->
         AlertDialog(
             onDismissRequest = { errore = null },
-            confirmButton = { TextButton(onClick = { errore = null }) { Text("OK") } },
+            confirmButton = { TextButton(onClick = { errore = null }) { Text(stringResource(R.string.ok)) } },
             text = { Text(messaggio) },
         )
     }
@@ -242,10 +243,13 @@ private fun Intestazione(incontro: Incontro) {
             add(MotoreTrascrizione.nomeLingua(incontro.lingua))
         }
         Text(parti.joinToString(" · "), style = MaterialTheme.typography.bodyMedium, color = Argo.colori.tenue)
+        val trascrittoCon = incontro.motoreTrascrizione?.let { stringResource(R.string.trascritto_con, it) }
+        val tempiStimati = stringResource(R.string.tempi_stimati)
+        val audioEliminato = stringResource(R.string.audio_eliminato)
         val origine = buildList {
-            incontro.motoreTrascrizione?.let { add("trascritto con $it") }
-            if (incontro.haTrascrizione && incontro.tempi == OrigineTempi.STIMATI) add("tempi stimati")
-            if (incontro.fileAudio == null && incontro.haTrascrizione) add("audio eliminato")
+            trascrittoCon?.let { add(it) }
+            if (incontro.haTrascrizione && incontro.tempi == OrigineTempi.STIMATI) add(tempiStimati)
+            if (incontro.fileAudio == null && incontro.haTrascrizione) add(audioEliminato)
         }
         if (origine.isNotEmpty()) Text(origine.joinToString(" · "), style = MaterialTheme.typography.bodySmall, color = Argo.colori.tenue)
     }
@@ -297,7 +301,7 @@ private fun RigaFoto(app: ArgoApp, id: String, foto: FotoIncontro, apri: () -> U
         Row(Modifier.padding(12.dp)) {
             Box(Modifier.size(72.dp).clip(RoundedCornerShape(10.dp))) {
                 miniatura?.let {
-                    Image(it.asImageBitmap(), contentDescription = "Foto al minuto ${Formato.durata(foto.secondo)}", contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
+                    Image(it.asImageBitmap(), contentDescription = stringResource(R.string.foto_al_minuto, Formato.durata(foto.secondo)), contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
                 }
             }
             Spacer(Modifier.width(12.dp))
@@ -305,8 +309,8 @@ private fun RigaFoto(app: ArgoApp, id: String, foto: FotoIncontro, apri: () -> U
                 Text("📷 ${Formato.durata(foto.secondo)}", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
                 Text(
                     when {
-                        !foto.letta -> "Testo da leggere…"
-                        foto.testoOCR.isBlank() -> "Nessun testo leggibile"
+                        !foto.letta -> stringResource(R.string.testo_da_leggere)
+                        foto.testoOCR.isBlank() -> stringResource(R.string.nessun_testo_leggibile)
                         else -> foto.testoOCR
                     },
                     style = MaterialTheme.typography.bodySmall,
@@ -329,7 +333,7 @@ private fun FotoIntera(app: ArgoApp, id: String, foto: FotoIncontro, chiudi: () 
     Dialog(onDismissRequest = chiudi, properties = DialogProperties(usePlatformDefaultWidth = false)) {
         Box(Modifier.fillMaxSize().clickable(onClick = chiudi)) {
             immagine?.let {
-                Image(it.asImageBitmap(), contentDescription = "Foto dell'incontro", contentScale = ContentScale.Fit, modifier = Modifier.fillMaxSize())
+                Image(it.asImageBitmap(), contentDescription = stringResource(R.string.foto_incontro), contentScale = ContentScale.Fit, modifier = Modifier.fillMaxSize())
             }
         }
     }

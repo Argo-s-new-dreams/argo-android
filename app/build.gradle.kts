@@ -10,7 +10,7 @@ plugins {
 }
 
 // Versione come su iPhone: semver per le persone, build AAAAMMGG.HHMM (ora di Roma) nel file VERSIONE.
-val versioneMarketing = "0.2.5"
+val versioneMarketing = "0.3.0"
 val build: String = rootProject.file("VERSIONE").readText().trim()
 
 // Google Play vuole un versionCode intero e sempre crescente: minuti trascorsi dal 1/1/2026 alla build.
@@ -71,6 +71,13 @@ android {
             versionNameSuffix = "-lab"
             matchingFallbacks += "release"
         }
+    }
+
+    // Interfaccia in italiano (base), inglese, spagnolo e tedesco: Android 13+ mostra la scelta anche
+    // nelle impostazioni di sistema dell'app (locale config generato da res/values-*)
+    androidResources {
+        generateLocaleConfig = true
+        localeFilters += listOf("it", "en", "es", "de")
     }
 
     buildFeatures {

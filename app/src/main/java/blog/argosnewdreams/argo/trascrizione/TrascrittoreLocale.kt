@@ -1,5 +1,7 @@
 package blog.argosnewdreams.argo.trascrizione
 
+import blog.argosnewdreams.argo.Testi
+import blog.argosnewdreams.argo.R
 import android.util.Log
 import blog.argosnewdreams.argo.audio.Audio
 import blog.argosnewdreams.argo.modello.Segmento
@@ -49,7 +51,7 @@ class TrascrittoreLocale(
         if (lavoro != null) return
         lavoro = ambito.launch(Dispatchers.Default) {
             try {
-                _parziale.value = "Preparo il modello sul telefono…"
+                _parziale.value = Testi.t(R.string.preparo_modello)
                 val riconoscitore = motore.riconoscitore()
                 val vad = motore.nuovoVad()
                 _parziale.value = ""
@@ -94,7 +96,7 @@ class TrascrittoreLocale(
 
     override suspend fun chiudi() {
         coda.close()
-        if (segmentiRicevuti >= 0) _parziale.value = "Trascrivo gli ultimi secondi…"
+        if (segmentiRicevuti >= 0) _parziale.value = Testi.t(R.string.trascrivo_ultimi_secondi)
         lavoro?.join()
     }
 
@@ -194,7 +196,7 @@ class TrascrittoreLocale(
                 } finally {
                     vad.release()
                 }
-                if (segmenti.isEmpty()) throw ErroreTrascrizione("Non ho trovato parlato nella registrazione.")
+                if (segmenti.isEmpty()) throw ErroreTrascrizione(Testi.t(R.string.nessun_parlato))
                 segmenti
             }
     }

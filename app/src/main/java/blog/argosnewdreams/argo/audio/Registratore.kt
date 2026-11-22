@@ -1,5 +1,7 @@
 package blog.argosnewdreams.argo.audio
 
+import blog.argosnewdreams.argo.Testi
+import blog.argosnewdreams.argo.R
 import android.annotation.SuppressLint
 import android.media.AudioFormat
 import android.media.AudioRecord
@@ -46,7 +48,7 @@ class Registratore(private val alBlocco: (ByteArray, Int) -> Unit) {
             .firstNotNullOfOrNull { sorgente ->
                 AudioRecord(sorgente, Audio.CAMPIONAMENTO, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, dimensione)
                     .takeIf { it.state == AudioRecord.STATE_INITIALIZED }
-            } ?: throw ErroreRegistrazione("Non riesco ad accedere al microfono.")
+            } ?: throw ErroreRegistrazione(Testi.t(R.string.microfono_non_accessibile))
 
         registro = nuovo
         wav = FileWav(file)
