@@ -14,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -42,7 +43,7 @@ class MainActivity : ComponentActivity() {
                 errorePrecedente?.let { testo ->
                     AlertDialog(
                         onDismissRequest = {},
-                        title = { Text("Argo si è chiuso per un errore") },
+                        title = { Text(stringResource(R.string.crash_titolo)) },
                         text = {
                             Text(
                                 testo,
@@ -54,13 +55,13 @@ class MainActivity : ComponentActivity() {
                             TextButton(onClick = {
                                 startActivity(Intent.createChooser(Intent(Intent.ACTION_SEND).apply {
                                     type = "text/plain"
-                                    putExtra(Intent.EXTRA_SUBJECT, "Errore di Argo per Android")
+                                    putExtra(Intent.EXTRA_SUBJECT, getString(R.string.crash_oggetto))
                                     putExtra(Intent.EXTRA_TEXT, testo)
-                                }, "Condividi l'errore"))
-                            }) { Text("Condividi") }
+                                }, getString(R.string.crash_condividi)))
+                            }) { Text(stringResource(R.string.condividi)) }
                         },
                         dismissButton = {
-                            TextButton(onClick = { RegistroCrash.cancella(this); errorePrecedente = null }) { Text("Chiudi") }
+                            TextButton(onClick = { RegistroCrash.cancella(this); errorePrecedente = null }) { Text(stringResource(R.string.chiudi)) }
                         },
                     )
                 }

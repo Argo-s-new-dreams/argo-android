@@ -1,5 +1,6 @@
 package blog.argosnewdreams.argo.ui
 
+import blog.argosnewdreams.argo.R
 import android.content.Context
 import android.content.Intent
 import androidx.core.content.FileProvider
@@ -24,10 +25,10 @@ object Condividi {
         val invio = Intent(Intent.ACTION_SEND).apply {
             type = "application/zip"
             putExtra(Intent.EXTRA_STREAM, uri)
-            putExtra(Intent.EXTRA_SUBJECT, "Pacchetto Argo · ${incontro.titoloMostrato}")
+            putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.pacchetto_oggetto, incontro.titoloMostrato))
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
-        context.startActivity(Intent.createChooser(invio, "Invia ad Argo sul computer"))
+        context.startActivity(Intent.createChooser(invio, context.getString(R.string.invia_ad_argo)))
     }
 
     /** Relazione e trascrizione in Markdown, come testo. */
@@ -38,7 +39,7 @@ object Condividi {
             putExtra(Intent.EXTRA_SUBJECT, incontro.titoloMostrato)
             putExtra(Intent.EXTRA_TEXT, incontro.markdown(app.nomeApp))
         }
-        context.startActivity(Intent.createChooser(invio, "Condividi il testo"))
+        context.startActivity(Intent.createChooser(invio, context.getString(R.string.condividi_testo)))
     }
 
     /** Svuotata a ogni condivisione: nessun pacchetto vecchio resta in giro sul telefono. */

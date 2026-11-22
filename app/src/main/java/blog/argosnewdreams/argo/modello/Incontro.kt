@@ -50,7 +50,7 @@ data class Incontro(
     fun nome(parlante: String?): String? {
         if (parlante == null) return null
         val scelto = nomiParlanti[parlante]?.trim().orEmpty()
-        return scelto.ifEmpty { "Parlante ${parlante.drop(1)}" }
+        return scelto.ifEmpty { Etichette.correnti.parlante.format(parlante.drop(1)) }
     }
 
     /** Parole e foto in ordine di tempo. */
@@ -70,26 +70,27 @@ data class Incontro(
                     }
                     is VoceCronologia.Scatto -> {
                         numeroFoto++
-                        val letto = voce.foto.testoOCR.ifBlank { "nessun testo leggibile" }.replace("\n", " · ")
-                        "[${Formato.durata(voce.foto.secondo)}] 📷 FOTO $numeroFoto: $letto"
+                        val letto = voce.foto.testoOCR.ifBlank { Etichette.correnti.nessunTesto }.replace("\n", " · ")
+                        "[${Formato.durata(voce.foto.secondo)}] 📷 ${Etichette.correnti.foto} $numeroFoto: $letto"
                     }
                 }
             }
         }
 
-    val titoloMostrato: String get() = titolo.ifBlank { "Incontro del ${Formato.dataBreve(creata)}" }
+    val titoloMostrato: String get() = titolo.ifBlank { Etichette.correnti.incontroDel.format(Formato.dataBreve(creata)) }
 
     /** Relazione in Markdown, pronta da condividere (stessa struttura dell'iPhone). */
     fun markdown(nomeApp: String): String = buildString {
+        val e = Etichette.correnti
         append("# $titoloMostrato\n\n")
         append("_${Formato.dataLunga(creata)} · ${Formato.durata(durata)}_\n\n")
-        if (riassunto.isNotBlank()) append("## Riassunto\n\n$riassunto\n\n")
-        if (contatti.isNotEmpty()) append("## Contatti\n\n" + contatti.joinToString("\n") { "- ${it.descrizione}" } + "\n\n")
-        if (puntiChiave.isNotEmpty()) append("## Punti chiave\n\n" + puntiChiave.joinToString("\n") { "- $it" } + "\n\n")
-        if (azioni.isNotEmpty()) append("## Azioni\n\n" + azioni.joinToString("\n") { "- [ ] ${it.testoCompleto}" } + "\n\n")
-        if (haTrascrizione || foto.isNotEmpty()) append("## Trascrizione\n\n$testoCompleto\n")
-        val origine = motoreRelazione?.let { "relazione: $it" } ?: "solo trascrizione"
-        append("\n---\nGenerato con $nomeApp · trascrizione sul dispositivo · $origine\n")
+        if (riassunto.isNotBlank()) append("## ${e.riassunto}\n\n$riassunto\n\n")
+        if (contatti.isNotEmpty()) append("## ${e.contatti}\n\n" + contatti.joinToString("\n") { "- ${it.descrizione}" } + "\n\n")
+        if (puntiChiave.isNotEmpty()) append("## ${e.puntiChiave}\n\n" + puntiChiave.joinToString("\n") { "- $it" } + "\n\n")
+        if (azioni.isNotEmpty()) append("## ${e.azioni}\n\n" + azioni.joinToString("\n") { "- [ ] ${it.testoCompleto}" } + "\n\n")
+        if (haTrascrizione || foto.isNotEmpty()) append("## ${e.trascrizione}\n\n$testoCompleto\n")
+        val origine = motoreRelazione?.let { e.relazione.format(it) } ?: e.soloTrascrizione
+        append("\n---\n" + e.generato.format(nomeApp, origine) + "\n")
     }
 }
 
@@ -130,7 +131,7 @@ data class Azione(val descrizione: String, val responsabile: String? = null, val
         get() = buildList {
             add(descrizione)
             responsabile?.takeIf { it.isNotBlank() }?.let { add("($it)") }
-            scadenza?.takeIf { it.isNotBlank() }?.let { add("entro $it") }
+            scadenza?.takeIf { it.isNotBlank() }?.let { add(Etichette.correnti.entro.format(it)) }
         }.joinToString(" ")
 }
 
@@ -156,8 +157,34 @@ enum class StatoIncontro { REGISTRATO, IN_ELABORAZIONE, TRASCRITTO, COMPLETATO, 
 @Serializable
 enum class OrigineTempi { PAROLE, STIMATI }
 
+/**
+ * Etichette dei testi generati dal modello (titolo, relazione, testo condiviso) nella lingua dell'app.
+ * I valori predefiniti sono quelli italiani, usati anche nei test; l'app li sostituisce con [blog.argosnewdreams.argo.Testi].
+ */
+data class Etichette(
+    val locale: Locale = Locale.ITALIAN,
+    val parlante: String = "Parlante %s",
+    val incontroDel: String = "Incontro del %s",
+    val nessunTesto: String = "nessun testo leggibile",
+    val foto: String = "FOTO",
+    val riassunto: String = "Riassunto",
+    val contatti: String = "Contatti",
+    val puntiChiave: String = "Punti chiave",
+    val azioni: String = "Azioni",
+    val trascrizione: String = "Trascrizione",
+    val relazione: String = "relazione: %s",
+    val soloTrascrizione: String = "solo trascrizione",
+    val generato: String = "Generato con %1\$s · trascrizione sul dispositivo · %2\$s",
+    val entro: String = "entro %s",
+    val formatoDataLunga: String = "d MMMM yyyy 'alle' HH:mm",
+    val formatoDataBreve: String = "d MMM, HH:mm",
+) {
+    companion object {
+        @Volatile var correnti = Etichette()
+    }
+}
+
 object Formato {
-    private val italiano = Locale.ITALIAN
 
     fun durata(secondi: Double): String {
         val totale = Math.round(secondi).toInt().coerceAtLeast(0)
@@ -168,10 +195,10 @@ object Formato {
     }
 
     fun dataLunga(millis: Long): String =
-        DateTimeFormatter.ofPattern("d MMMM yyyy 'alle' HH:mm", italiano)
+        DateTimeFormatter.ofPattern(Etichette.correnti.formatoDataLunga, Etichette.correnti.locale)
             .format(Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault()))
 
     fun dataBreve(millis: Long): String =
-        DateTimeFormatter.ofPattern("d MMM, HH:mm", italiano)
+        DateTimeFormatter.ofPattern(Etichette.correnti.formatoDataBreve, Etichette.correnti.locale)
             .format(Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault()))
 }

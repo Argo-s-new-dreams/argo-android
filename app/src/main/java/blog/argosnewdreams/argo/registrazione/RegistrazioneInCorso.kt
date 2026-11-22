@@ -1,5 +1,7 @@
 package blog.argosnewdreams.argo.registrazione
 
+import blog.argosnewdreams.argo.Testi
+import blog.argosnewdreams.argo.R
 import android.content.Context
 import android.graphics.Bitmap
 import blog.argosnewdreams.argo.audio.Registratore
@@ -74,7 +76,7 @@ class RegistrazioneInCorso(
      * Il permesso del microfono va chiesto prima.
      */
     fun avvia(lingua: String, motore: Motore?) {
-        check(_attiva.value == null) { "C'è già una registrazione in corso." }
+        check(_attiva.value == null) { Testi.t(R.string.registrazione_gia_in_corso) }
         val id = UUID.randomUUID().toString().uppercase()
         archivio.cartella(id).mkdirs()
         _segmenti.value = emptyList()
@@ -131,7 +133,7 @@ class RegistrazioneInCorso(
         val motoreUsato = motore?.nome
         val dalVivoRiuscito = (trascrittore?.segmentiRicevuti ?: 0) > 0
         val avviso = erroreTrascrizione.value?.takeIf { dalVivoRiuscito }
-            ?.let { "La trascrizione dal vivo ha avuto un problema a metà: $it" }
+            ?.let { Testi.t(R.string.problema_dal_vivo, it) }
         pulisci()
 
         archivio.salva(

@@ -33,11 +33,12 @@ class ArgoApp : Application() {
     lateinit var modelloLocale: ModelloLocale
         private set
 
-    val nomeApp: String get() = "Argo per Android ${BuildConfig.VERSION_NAME}"
+    val nomeApp: String get() = Testi.t(R.string.nome_app_versione, BuildConfig.VERSION_NAME)
 
     override fun onCreate() {
         super.onCreate()
         RegistroCrash.installa(this)   // per primo: anche un errore qui sotto resta leggibile al riavvio
+        Testi.installa(this)
         archivio = Archivio(filesDir)
         impostazioni = Impostazioni(this)
         modelloLocale = ModelloLocale(this, ambito)
@@ -61,13 +62,21 @@ class ArgoApp : Application() {
         }
     }
 
-    private fun creaCanaleNotifiche() {
-        val canale = NotificationChannel(CANALE_REGISTRAZIONE, "Registrazione in corso", NotificationManager.IMPORTANCE_LOW).apply {
-            description = "Avviso fisso mentre Argo registra un incontro"
+    /** Cambio della lingua del telefono o di Argo: testi fuori dalle schermate e nomi degli avvisi nella nuova lingua. */
+    override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
+        super.onConfigurationChanged(newConfig)
+        Testi.configurazioneCambiata()
+        creaCanaleNotifiche()
+    }
+
+    /** Chiamata anche quando cambia la lingua: ricreare un canale esistente ne aggiorna solo nome e descrizione. */
+    fun creaCanaleNotifiche() {
+        val canale = NotificationChannel(CANALE_REGISTRAZIONE, Testi.t(R.string.canale_registrazione), NotificationManager.IMPORTANCE_LOW).apply {
+            description = Testi.t(R.string.canale_registrazione_desc)
             setShowBadge(false)
         }
-        val canaleElaborazione = NotificationChannel(CANALE_ELABORAZIONE, "Elaborazione degli incontri", NotificationManager.IMPORTANCE_LOW).apply {
-            description = "Avviso fisso mentre Argo trascrive un incontro sul telefono"
+        val canaleElaborazione = NotificationChannel(CANALE_ELABORAZIONE, Testi.t(R.string.canale_elaborazione), NotificationManager.IMPORTANCE_LOW).apply {
+            description = Testi.t(R.string.canale_elaborazione_desc)
             setShowBadge(false)
         }
         getSystemService(NotificationManager::class.java).createNotificationChannels(listOf(canale, canaleElaborazione))

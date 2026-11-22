@@ -1,5 +1,7 @@
 package blog.argosnewdreams.argo.trascrizione
 
+import blog.argosnewdreams.argo.Testi
+import blog.argosnewdreams.argo.R
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -90,7 +92,7 @@ class ModelloLocale(context: Context, private val ambito: CoroutineScope) {
                 _stato.value = Stato.Pronto
             } catch (e: Exception) {
                 Log.w(TAG, "Download del modello locale non riuscito", e)
-                _stato.value = Stato.Errore(e.message ?: "Download non riuscito.")
+                _stato.value = Stato.Errore(e.message ?: Testi.t(R.string.download_non_riuscito))
             }
         }
     }
@@ -111,7 +113,7 @@ class ModelloLocale(context: Context, private val ambito: CoroutineScope) {
         val spazio = cartella.usableSpace
         val mancanti = FILE.sumOf { maxOf(0L, it.byte - file(it.nome).length()) }
         if (spazio < mancanti + 200_000_000) {
-            throw ErroreTrascrizione("Spazio insufficiente: servono ${mancanti / 1_000_000 + 200} MB liberi, ce ne sono ${spazio / 1_000_000}.")
+            throw ErroreTrascrizione(Testi.t(R.string.spazio_insufficiente, mancanti / 1_000_000 + 200, spazio / 1_000_000))
         }
         segnaleVerificato.delete()
         var giaScaricati = 0L
@@ -127,7 +129,7 @@ class ModelloLocale(context: Context, private val ambito: CoroutineScope) {
             scaricaFile(voce, parziale) { byteFile -> _stato.value = Stato.InDownload(giaScaricati + byteFile) }
             if (sha256(parziale) != voce.sha256) {
                 parziale.delete()
-                throw ErroreTrascrizione("Il file ${voce.nome} non corrisponde all'impronta attesa: l'ho cancellato. Riprova il download.")
+                throw ErroreTrascrizione(Testi.t(R.string.impronta_errata, voce.nome))
             }
             parziale.renameTo(destinazione)
             giaScaricati += voce.byte
@@ -152,7 +154,7 @@ class ModelloLocale(context: Context, private val ambito: CoroutineScope) {
                 val codice = connessione.responseCode
                 val riprende = codice == HttpURLConnection.HTTP_PARTIAL
                 if (codice != HttpURLConnection.HTTP_OK && !riprende) {
-                    throw ErroreTrascrizione("Il server del modello ha risposto $codice.")
+                    throw ErroreTrascrizione(Testi.t(R.string.server_risponde, codice))
                 }
                 var scritti = if (riprende) giaPresenti else 0L
                 connessione.inputStream.use { ingresso ->
@@ -170,10 +172,10 @@ class ModelloLocale(context: Context, private val ambito: CoroutineScope) {
                 }
                 connessione.disconnect()
                 if (parziale.length() == voce.byte) return
-                throw ErroreTrascrizione("Download di ${voce.nome} interrotto.")
+                throw ErroreTrascrizione(Testi.t(R.string.download_interrotto, voce.nome))
             } catch (e: java.io.IOException) {
                 // Rete instabile (fiera, hotel): qualche nuovo tentativo, ripartendo da dove si era arrivati
-                if (++tentativi >= 5) throw ErroreTrascrizione("Rete instabile: download di ${voce.nome} interrotto (${e.message}). Riprova più tardi, riprende da dove si era fermato.")
+                if (++tentativi >= 5) throw ErroreTrascrizione(Testi.t(R.string.rete_instabile, voce.nome, e.message.orEmpty()))
                 kotlinx.coroutines.delay(3_000L * tentativi)
             }
         }

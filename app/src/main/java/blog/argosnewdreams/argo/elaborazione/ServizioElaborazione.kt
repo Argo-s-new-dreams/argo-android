@@ -1,5 +1,6 @@
 package blog.argosnewdreams.argo.elaborazione
 
+import blog.argosnewdreams.argo.Testi
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Notification
@@ -75,8 +76,8 @@ class ServizioElaborazione : Service() {
             )
             return NotificationCompat.Builder(context, ArgoApp.CANALE_ELABORAZIONE)
                 .setSmallIcon(R.drawable.ic_stat_argo)
-                .setContentTitle("Argo sta elaborando l'incontro")
-                .setContentText(fase ?: "Sul telefono, senza cloud")
+                .setContentTitle(Testi.t(R.string.notifica_elabora_titolo))
+                .setContentText(fase ?: Testi.t(R.string.notifica_elabora_testo))
                 .setOngoing(true)
                 .setOnlyAlertOnce(true)
                 .setCategory(NotificationCompat.CATEGORY_PROGRESS)

@@ -1,5 +1,7 @@
 package blog.argosnewdreams.argo.ui
 
+import blog.argosnewdreams.argo.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -48,6 +50,8 @@ import blog.argosnewdreams.argo.BuildConfig
 import blog.argosnewdreams.argo.trascrizione.Modalita
 import blog.argosnewdreams.argo.trascrizione.MotoreTrascrizione
 import blog.argosnewdreams.argo.trascrizione.StatoModello
+import blog.argosnewdreams.argo.trascrizione.ModelloLocale
+import blog.argosnewdreams.argo.Testi
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,8 +65,8 @@ fun ImpostazioniScreen(app: ArgoApp, indietro: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Impostazioni") },
-                navigationIcon = { IconButton(onClick = indietro) { Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "Indietro") } },
+                title = { Text(stringResource(R.string.impostazioni)) },
+                navigationIcon = { IconButton(onClick = indietro) { Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = stringResource(R.string.indietro)) } },
             )
         },
     ) { margini ->
@@ -70,45 +74,46 @@ fun ImpostazioniScreen(app: ArgoApp, indietro: () -> Unit) {
             Modifier.padding(margini).fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 20.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Sezione("Lingua predefinita")
-            MotoreTrascrizione.lingueProposte.forEach { (codice, nome) ->
-                Scelta(nome, null, codice == lingua) { imp.impostaLingua(codice) }
+            LinguaAppRiga()
+
+            Sezione(stringResource(R.string.lingua_predefinita))
+            MotoreTrascrizione.lingueProposte.forEach { codice ->
+                Scelta(MotoreTrascrizione.nomeLingua(codice), null, codice == lingua) { imp.impostaLingua(codice) }
             }
 
-            Sezione("Trascrizione")
-            Modalita.entries.forEach { m -> Scelta(m.etichetta, m.descrizione, m == modalita) { imp.impostaModalita(m) } }
-            CartaMotore(app, rememberStatoMotore(app, lingua, modalita), contesto = "registrare")
+            Sezione(stringResource(R.string.trascrizione))
+            Modalita.entries.forEach { m ->
+                Scelta(stringResource(m.idEtichetta), stringResource(m.idDescrizione, ModelloLocale.MEGABYTE), m == modalita) { imp.impostaModalita(m) }
+            }
+            CartaMotore(app, rememberStatoMotore(app, lingua, modalita))
             ModelloLocaleRiga(app)
 
-            Sezione("Privacy")
+            Sezione(stringResource(R.string.privacy))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
-                    Text("Elimina l'audio appena trascritto")
+                    Text(stringResource(R.string.elimina_audio))
                     Text(
-                        "Restano solo testo e foto. Se la trascrizione non riesce, l'audio resta finché non la ripeti.",
+                        stringResource(R.string.elimina_audio_spiegazione),
                         style = MaterialTheme.typography.bodySmall, color = Argo.colori.tenue,
                     )
                 }
                 Switch(checked = eliminaAudio, onCheckedChange = imp::impostaEliminaAudio)
             }
             Text(
-                "Argo non è un registratore: è una stenografa digitale locale. Ascolta solo mentre lo usi, trascrive sul telefono, " +
-                    "non conserva la voce, non invia la conversazione a un cloud e lascia a te il controllo del testo. " +
-                    "Gli incontri sono esclusi dal backup di Google.",
+                stringResource(R.string.promessa),
                 style = MaterialTheme.typography.bodySmall, color = Argo.colori.tenue,
                 modifier = Modifier.padding(top = 8.dp),
             )
 
-            Sezione("Crediti")
+            Sezione(stringResource(R.string.crediti))
             Text(
-                "Argo locale usa NVIDIA Parakeet TDT 0.6B v3 (CC-BY-4.0, versione int8 per sherpa-onnx di k2-fsa), " +
-                    "sherpa-onnx (Apache 2.0) e Silero VAD (MIT). Trascrizione e testo delle foto anche con Google ML Kit.",
+                stringResource(R.string.crediti_testo),
                 style = MaterialTheme.typography.bodySmall, color = Argo.colori.tenue,
             )
             LicenzeRiga()
 
-            Sezione("Informazioni")
-            Text("Argo per Android ${BuildConfig.VERSION_NAME} · build ${BuildConfig.BUILD_ARGO}", style = MaterialTheme.typography.bodyMedium)
+            Sezione(stringResource(R.string.informazioni))
+            Text(stringResource(R.string.versione_build, BuildConfig.VERSION_NAME, BuildConfig.BUILD_ARGO), style = MaterialTheme.typography.bodyMedium)
             Text("Argo's New Dreams · argosnewdreams.blog", style = MaterialTheme.typography.bodySmall, color = Argo.colori.tenue)
             Spacer(Modifier.size(24.dp))
         }
@@ -120,15 +125,16 @@ fun ImpostazioniScreen(app: ArgoApp, indietro: () -> Unit) {
 private fun LicenzeRiga() {
     val contesto = androidx.compose.ui.platform.LocalContext.current
     var aperto by remember { mutableStateOf(false) }
-    androidx.compose.material3.TextButton(onClick = { aperto = true }) { Text("Licenze e riconoscimenti") }
+    androidx.compose.material3.TextButton(onClick = { aperto = true }) { Text(stringResource(R.string.licenze)) }
     if (aperto) {
+        val nonTrovate = stringResource(R.string.licenze_non_trovate)
         val testo = remember {
             runCatching { contesto.assets.open("licenze_terze_parti.txt").bufferedReader().use { it.readText() } }
-                .getOrDefault("Testo delle licenze non trovato: lo trovi su github.com/Argo-s-new-dreams/argo-android (THIRD_PARTY_LICENSES.md).")
+                .getOrDefault(nonTrovate)
         }
         androidx.compose.material3.AlertDialog(
             onDismissRequest = { aperto = false },
-            title = { Text("Licenze e riconoscimenti") },
+            title = { Text(stringResource(R.string.licenze)) },
             text = {
                 Text(
                     testo,
@@ -136,7 +142,7 @@ private fun LicenzeRiga() {
                     modifier = Modifier.verticalScroll(rememberScrollState()),
                 )
             },
-            confirmButton = { androidx.compose.material3.TextButton(onClick = { aperto = false }) { Text("Chiudi") } },
+            confirmButton = { androidx.compose.material3.TextButton(onClick = { aperto = false }) { Text(stringResource(R.string.chiudi)) } },
         )
     }
 }
@@ -149,19 +155,40 @@ private fun ModelloLocaleRiga(app: ArgoApp) {
     if (stato != blog.argosnewdreams.argo.trascrizione.ModelloLocale.Stato.Pronto) return
     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().padding(top = 4.dp)) {
         Text(
-            "Argo locale occupa circa ${blog.argosnewdreams.argo.trascrizione.ModelloLocale.MEGABYTE} MB sul telefono.",
+            stringResource(R.string.spazio_modello, ModelloLocale.MEGABYTE),
             style = MaterialTheme.typography.bodySmall, color = Argo.colori.tenue, modifier = Modifier.weight(1f),
         )
-        androidx.compose.material3.TextButton(onClick = { conferma = true }) { Text("Elimina modello") }
+        androidx.compose.material3.TextButton(onClick = { conferma = true }) { Text(stringResource(R.string.elimina_modello)) }
     }
     if (conferma) {
         androidx.compose.material3.AlertDialog(
             onDismissRequest = { conferma = false },
-            title = { Text("Eliminare il modello di Argo locale?") },
-            text = { Text("Liberi spazio; per trascrivere di nuovo con Argo locale andrà riscaricato.") },
-            confirmButton = { androidx.compose.material3.TextButton(onClick = { conferma = false; app.modelloLocale.elimina() }) { Text("Elimina") } },
-            dismissButton = { androidx.compose.material3.TextButton(onClick = { conferma = false }) { Text("Annulla") } },
+            title = { Text(stringResource(R.string.eliminare_modello)) },
+            text = { Text(stringResource(R.string.eliminare_modello_spiegazione)) },
+            confirmButton = { androidx.compose.material3.TextButton(onClick = { conferma = false; app.modelloLocale.elimina() }) { Text(stringResource(R.string.elimina)) } },
+            dismissButton = { androidx.compose.material3.TextButton(onClick = { conferma = false }) { Text(stringResource(R.string.annulla)) } },
         )
+    }
+}
+
+/**
+ * Lingua dell'interfaccia: italiano, inglese, spagnolo, tedesco o come il telefono.
+ * Da Android 13 si sceglie qui (o nelle impostazioni di sistema dell'app); su Android 12 segue il telefono.
+ */
+@Composable
+private fun LinguaAppRiga() {
+    Sezione(stringResource(R.string.lingua_app))
+    if (android.os.Build.VERSION.SDK_INT < 33) {
+        Text(stringResource(R.string.lingua_app_android12), style = MaterialTheme.typography.bodySmall, color = Argo.colori.tenue)
+        return
+    }
+    var scelta by remember { mutableStateOf(Testi.linguaScelta()) }
+    Scelta(stringResource(R.string.lingua_app_sistema), null, scelta == null) { scelta = null; Testi.impostaLingua(null) }
+    Testi.lingueApp.forEach { tag ->
+        // Ogni lingua scritta nella sua lingua: chi non capisce l'interfaccia ritrova la propria
+        val locale = java.util.Locale.forLanguageTag(tag)
+        val nome = locale.getDisplayLanguage(locale).replaceFirstChar { it.titlecase(locale) }
+        Scelta(nome, null, scelta == tag) { scelta = tag; Testi.impostaLingua(tag) }
     }
 }
 

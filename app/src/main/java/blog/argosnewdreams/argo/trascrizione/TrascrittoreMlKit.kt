@@ -1,5 +1,7 @@
 package blog.argosnewdreams.argo.trascrizione
 
+import blog.argosnewdreams.argo.Testi
+import blog.argosnewdreams.argo.R
 import android.os.ParcelFileDescriptor
 import blog.argosnewdreams.argo.modello.Segmento
 import com.google.mlkit.genai.common.audio.AudioSource
@@ -64,7 +66,7 @@ class TrascrittoreMlKit(
             ascoltatore = ambito.launch {
                 runCatching {
                     motore.client.startRecognition(richiesta).collect { risposta -> gestisci(risposta, offset) }
-                }.onFailure { _errore.value = it.message ?: "Errore della trascrizione dal vivo." }
+                }.onFailure { _errore.value = it.message ?: Testi.t(R.string.errore_dal_vivo) }
                 // Il riconoscimento si è chiuso da solo mentre si registra ancora: si riparte.
                 if (!chiusa && sessione === this@Sessione) {
                     canale.close()
@@ -119,7 +121,7 @@ class TrascrittoreMlKit(
                 }
             }
             is SpeechRecognizerResponse.ErrorResponse ->
-                _errore.value = risposta.e.message ?: "Errore della trascrizione (codice ${risposta.e.errorCode})."
+                _errore.value = risposta.e.message ?: Testi.t(R.string.errore_trascrizione_codice, risposta.e.errorCode)
             else -> Unit // livello audio e completamento: niente da fare
         }
     }

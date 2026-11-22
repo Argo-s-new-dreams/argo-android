@@ -3,14 +3,27 @@
 Tutte le modifiche rilevanti di Argo per Android.
 Versioni: `versionName` (semver) + build `AAAAMMGG.HHMM` (ora di Roma).
 
-## [0.2.5] · build (al prossimo invio)
+## [0.3.0] · build (al prossimo invio)
 
-Correzione urgente: da Android 15 in poi Argo si chiudeva appena premevi Stop.
+Argo parla quattro lingue: italiano, inglese, spagnolo e tedesco. E da Android 15 non si chiude più quando premi Stop.
+
+### Aggiunto
+- **Interfaccia in italiano, inglese, spagnolo e tedesco.** Tutti i testi delle schermate, degli avvisi, degli errori e del testo condiviso. Argo segue la lingua del telefono; da Android 13 la scegli anche in Impostazioni › Lingua dell'app (o nelle impostazioni di sistema dell'app). Su Android 12 segue sempre il telefono. Se il telefono è in un'altra lingua, Argo resta in italiano.
+- La **lingua dell'incontro** resta una scelta a parte: puoi registrare in tedesco con l'app in italiano. I nomi delle lingue ora sono scritti nella lingua dell'app.
+- Date, titoli predefiniti («Incontro del…», «Meeting of…»), nomi dei parlanti e intestazioni della relazione nella lingua dell'app.
+- Test `TraduzioniTest`: ogni testo esiste in tutte le lingue con gli stessi segnaposto.
+
+### Note
+- Le traduzioni in inglese, spagnolo e tedesco sono una prima versione da rileggere.
+- I nomi dei menu di Argo sul computer citati nei testi inglese, spagnolo e tedesco («Meetings › Import package…») saranno giusti quando anche Argo desktop avrà le quattro lingue.
+- Avvisi ed errori già salvati in un incontro restano nella lingua in cui sono nati.
 
 ### Corretto
 - **Chiusura dell'app al termine della registrazione (Android 15 e successivi).** Il servizio «Argo sta elaborando l'incontro» partiva senza tipo, e Android chiudeva l'app. Ora parte come *mediaProcessing*, come previsto. Trovato registrando il video dimostrativo per Google Play sull'emulatore Android 17.
 
 ### Da provare
+- Impostazioni › Lingua dell'app › English (poi Español, Deutsch): tutte le schermate cambiano lingua senza riavviare; torna a «Come il telefono»
+- Con l'app in inglese registra un incontro breve: avvisi, fasi dell'elaborazione e testo condiviso sono in inglese
 - Registra un incontro breve e premi Stop: Argo non si chiude, compare l'avviso «Argo sta elaborando l'incontro» e poi l'incontro pronto
 - Durante l'elaborazione torna alla schermata Home: l'avviso resta nella tendina
 

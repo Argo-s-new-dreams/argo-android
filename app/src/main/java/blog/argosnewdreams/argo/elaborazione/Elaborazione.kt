@@ -1,5 +1,7 @@
 package blog.argosnewdreams.argo.elaborazione
 
+import blog.argosnewdreams.argo.Testi
+import blog.argosnewdreams.argo.R
 import blog.argosnewdreams.argo.Impostazioni
 import blog.argosnewdreams.argo.foto.LettoreFoto
 import blog.argosnewdreams.argo.modello.Archivio
@@ -42,7 +44,7 @@ class Elaborazione(
     suspend fun esegui(id: String) {
         if (_fasi.value.containsKey(id)) return
         fun fase(testo: String) = _fasi.update { it + (id to testo) }
-        fase("Preparo…")
+        fase(Testi.t(R.string.fase_preparo))
         try {
             archivio.aggiorna(id) { it.copy(stato = StatoIncontro.IN_ELABORAZIONE, messaggioErrore = null) }
             var incontro = archivio.cerca(id) ?: return
@@ -52,13 +54,13 @@ class Elaborazione(
             // 1 · Piano B: trascrizione dal file
             val audio = archivio.fileAudio(id)
             if (!incontro.haTrascrizione && audio.exists()) {
-                fase("Trascrivo sul telefono…")
+                fase(Testi.t(R.string.fase_trascrivo))
                 when (val stato = MotoreTrascrizione.prepara(incontro.lingua, impostazioni.modalita.value, modelloLocale, assets)) {
                     is StatoModello.Pronto -> stato.motore.use { motore ->
                         val esito = runCatching {
                             when (motore) {
                                 // Argo locale: stessa pipeline del dal vivo, quindi tempi veri
-                                is Motore.Locale -> TrascrittoreLocale.trascriviFile(motore, audio) { fase("Trascrivo sul telefono… $it%") } to OrigineTempi.PAROLE
+                                is Motore.Locale -> TrascrittoreLocale.trascriviFile(motore, audio) { fase(Testi.t(R.string.fase_trascrivo_percento, it)) } to OrigineTempi.PAROLE
                                 is Motore.MlKit -> TrascrizioneDaFile.trascrivi(motore, audio, incontro.durata) to OrigineTempi.STIMATI
                             }
                         }.getOrElse { errore ->
@@ -71,14 +73,13 @@ class Elaborazione(
                         incontro = archivio.aggiorna(id) {
                             it.copy(segmenti = segmenti, tempi = tempi, motoreTrascrizione = motore.nome)
                         } ?: return
-                        if (tempi == OrigineTempi.STIMATI) avvisi += "Trascritto dopo la registrazione: i tempi di frasi e foto sono stimati."
+                        if (tempi == OrigineTempi.STIMATI) avvisi += Testi.t(R.string.avviso_tempi_stimati)
                     }
                     is StatoModello.DaScaricare, is StatoModello.InDownload -> {
                         archivio.aggiorna(id) {
                             it.copy(
                                 stato = StatoIncontro.ERRORE,
-                                messaggioErrore = "Il modello di trascrizione non è ancora sul telefono. " +
-                                    "Scaricalo da Impostazioni › Trascrizione, poi tocca «Riprova». L'audio resta finché non è trascritto.",
+                                messaggioErrore = Testi.t(R.string.modello_mancante),
                             )
                         }
                         return
@@ -93,7 +94,7 @@ class Elaborazione(
             // 2 · Testo delle foto
             val daLeggere = incontro.foto.withIndex().filter { !it.value.letta }
             for ((posizione, voce) in daLeggere.withIndex()) {
-                fase("Leggo la foto ${posizione + 1} di ${daLeggere.size}…")
+                fase(Testi.t(R.string.fase_leggo_foto, posizione + 1, daLeggere.size))
                 val (testo, riferimenti) = LettoreFoto.leggi(archivio.fileFoto(id, voce.value.nomeFile))
                 incontro = archivio.aggiorna(id) { attuale ->
                     attuale.copy(foto = attuale.foto.map {
@@ -111,7 +112,7 @@ class Elaborazione(
             archivio.aggiorna(id) {
                 it.copy(
                     stato = if (it.haTrascrizione || it.foto.isNotEmpty()) StatoIncontro.TRASCRITTO else StatoIncontro.ERRORE,
-                    messaggioErrore = if (it.haTrascrizione || it.foto.isNotEmpty()) null else "Non ho trovato parlato nella registrazione.",
+                    messaggioErrore = if (it.haTrascrizione || it.foto.isNotEmpty()) null else Testi.t(R.string.nessun_parlato),
                     avviso = avvisi.distinct().joinToString("\n").ifEmpty { null },
                 )
             }
@@ -122,7 +123,7 @@ class Elaborazione(
             android.util.Log.e("Argo", "Elaborazione dell'incontro $id non riuscita", e)
             runCatching {
                 archivio.aggiorna(id) {
-                    it.copy(stato = StatoIncontro.ERRORE, messaggioErrore = "Elaborazione non riuscita: ${e.message ?: e.javaClass.simpleName}")
+                    it.copy(stato = StatoIncontro.ERRORE, messaggioErrore = Testi.t(R.string.elaborazione_non_riuscita, e.message ?: e.javaClass.simpleName))
                 }
             }
         } finally {

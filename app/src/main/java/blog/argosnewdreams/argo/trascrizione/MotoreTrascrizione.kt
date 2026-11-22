@@ -25,13 +25,18 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.util.Locale
+import androidx.annotation.StringRes
+import blog.argosnewdreams.argo.R
+import blog.argosnewdreams.argo.Testi
 
 /** Quale motore usare per trascrivere: tutti girano sul telefono. */
-enum class Modalita(val etichetta: String, val descrizione: String) {
-    AUTOMATICA("Automatica", "Avanzata (Google) se il telefono la supporta, altrimenti Argo locale"),
-    LOCALE("Argo locale", "Modello Parakeet dentro Argo: ogni telefono Android 12+, circa ${ModelloLocale.MEGABYTE} MB da scaricare una volta"),
-    AVANZATA("Avanzata (Google)", "Gemini Nano: solo telefoni recenti, es. Galaxy S26, Pixel 10"),
-    BASE("Base (Google)", "Modello vocale di sistema; l'italiano è in beta e su alcuni telefoni non c'è"),
+enum class Modalita(@StringRes val idEtichetta: Int, @StringRes val idDescrizione: Int) {
+    AUTOMATICA(R.string.modalita_automatica, R.string.modalita_automatica_desc),
+    LOCALE(R.string.modalita_locale, R.string.modalita_locale_desc),
+    AVANZATA(R.string.modalita_avanzata, R.string.modalita_avanzata_desc),
+    BASE(R.string.modalita_base, R.string.modalita_base_desc);
+
+    val etichetta: String get() = Testi.t(idEtichetta)
 }
 
 /** Lo stato del motore scelto per una lingua. */
@@ -54,7 +59,7 @@ sealed class Motore(val nome: String) : AutoCloseable {
      * Argo locale: Parakeet TDT 0.6B v3 con sherpa-onnx + Silero VAD (negli asset).
      * Il modello (~1,5 GB in memoria) si carica alla prima richiesta e si libera con [close].
      */
-    class Locale(val modello: ModelloLocale, private val assets: AssetManager) : Motore("Argo locale · ${ModelloLocale.NOME}") {
+    class Locale(val modello: ModelloLocale, private val assets: AssetManager) : Motore(Testi.t(R.string.motore_locale, ModelloLocale.NOME)) {
         private val blocco = Mutex()
         @Volatile private var riconoscitore: OfflineRecognizer? = null
 
@@ -117,16 +122,16 @@ object MotoreTrascrizione {
 
     private const val TAG = "Argo"
 
-    val lingueProposte = listOf(
-        "it-IT" to "Italiano",
-        "en-US" to "Inglese (USA)",
-        "en-GB" to "Inglese (UK)",
-        "de-DE" to "Tedesco",
-        "fr-FR" to "Francese",
-        "es-ES" to "Spagnolo",
-    )
+    /** Lingue in cui si può registrare un incontro (indipendenti dalla lingua dell'interfaccia). */
+    val lingueProposte = listOf("it-IT", "en-US", "en-GB", "de-DE", "fr-FR", "es-ES")
 
-    fun nomeLingua(codice: String) = lingueProposte.firstOrNull { it.first == codice }?.second ?: codice
+    /** Nome della lingua nella lingua dell'app, es. «Inglese (Regno Unito)», «English (United Kingdom)». */
+    fun nomeLingua(codice: String): String {
+        val dove = Testi.locale
+        return Locale.forLanguageTag(codice).getDisplayName(dove)
+            .replaceFirstChar { if (it.isLowerCase()) it.titlecase(dove) else it.toString() }
+            .ifEmpty { codice }
+    }
 
     /**
      * Automatica: Avanzata (Google) se c'è → Argo locale se già scaricato → Base (Google) se pronta →
@@ -153,9 +158,9 @@ object MotoreTrascrizione {
                 return locale()
             }
         }
-        val dettaglio = diagnosi.joinToString("\n").ifEmpty { "nessuna risposta da ML Kit" }
+        val dettaglio = diagnosi.joinToString("\n").ifEmpty { Testi.t(R.string.nessuna_risposta_mlkit) }
         return StatoModello.NonDisponibile(
-            "La trascrizione di Google non è disponibile su questo telefono.\n$dettaglio\nScegli «Argo locale» in Impostazioni › Trascrizione."
+            Testi.t(R.string.google_non_disponibile, dettaglio)
         )
     }
 
@@ -171,7 +176,7 @@ object MotoreTrascrizione {
             diagnosi += "${modalita.etichetta}: ${descrivi(it)}"
             return null
         }
-        val motore = Motore.MlKit(client, "Android · ${modalita.etichetta.lowercase()}")
+        val motore = Motore.MlKit(client, Testi.t(R.string.motore_android, modalita.etichetta.lowercase(Testi.locale)))
         val stato = runCatching { client.checkStatus() }.getOrElse {
             Log.w(TAG, "checkStatus ${modalita.name} ($lingua) fallito", it)
             diagnosi += "${modalita.etichetta}: ${descrivi(it)}"
@@ -184,7 +189,7 @@ object MotoreTrascrizione {
             FeatureStatus.DOWNLOADING -> StatoModello.InDownload(motore).takeUnless { soloSePronto }
             null -> null
             else -> {
-                diagnosi += "${modalita.etichetta}: non supportata per ${nomeLingua(lingua)} su questo telefono"
+                diagnosi += Testi.t(R.string.non_supportata_lingua, modalita.etichetta, nomeLingua(lingua))
                 null
             }
         }
@@ -203,7 +208,7 @@ object MotoreTrascrizione {
                         if (totale > 0) ((stato.totalBytesDownloaded * 100) / totale).toInt().coerceIn(0, 100) else null
                     is DownloadStatus.DownloadCompleted -> 100
                     is DownloadStatus.DownloadFailed -> throw ErroreTrascrizione(
-                        "Download del modello non riuscito (${stato.e.message ?: "errore ${stato.e.errorCode}"}). Serve una connessione: riprova dalle Impostazioni."
+                        Testi.t(R.string.download_google_fallito, stato.e.message ?: Testi.t(R.string.errore_codice, stato.e.errorCode))
                     )
                 }
             }

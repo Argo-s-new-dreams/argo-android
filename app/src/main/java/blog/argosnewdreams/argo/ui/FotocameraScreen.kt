@@ -1,5 +1,7 @@
 package blog.argosnewdreams.argo.ui
 
+import blog.argosnewdreams.argo.R
+import androidx.compose.ui.res.stringResource
 import android.Manifest
 import android.content.pm.PackageManager
 import androidx.activity.compose.BackHandler
@@ -98,9 +100,9 @@ fun FotocameraScreen(app: ArgoApp, chiudi: () -> Unit) {
             )
         } else {
             Column(Modifier.align(Alignment.Center).padding(32.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                Text("Serve l'accesso alla fotocamera per le foto dell'incontro.", color = Color.White)
+                Text(stringResource(R.string.serve_fotocamera), color = Color.White)
                 Spacer(Modifier.size(16.dp))
-                Button(onClick = { richiesta.launch(Manifest.permission.CAMERA) }) { Text("Consenti") }
+                Button(onClick = { richiesta.launch(Manifest.permission.CAMERA) }) { Text(stringResource(R.string.consenti)) }
             }
         }
 
@@ -109,10 +111,10 @@ fun FotocameraScreen(app: ArgoApp, chiudi: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            IconButton(onClick = chiudi) { Icon(Icons.Outlined.Close, contentDescription = "Torna alla registrazione", tint = Color.White) }
+            IconButton(onClick = chiudi) { Icon(Icons.Outlined.Close, contentDescription = stringResource(R.string.torna_alla_registrazione), tint = Color.White) }
             Surface(color = Color.Black.copy(alpha = 0.55f), shape = RoundedCornerShape(50)) {
                 Text(
-                    "● ${Formato.durata(durata)} · ${scatti.size} foto",
+                    stringResource(R.string.durata_foto, Formato.durata(durata), scatti.size),
                     color = Color.White,
                     style = MaterialTheme.typography.labelLarge,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
@@ -143,14 +145,14 @@ fun FotocameraScreen(app: ArgoApp, chiudi: () -> Unit) {
                                 immagine.close()
                                 ambito.launch {
                                     runCatching { app.registrazione.aggiungiFoto(bitmap, rotazione) }
-                                        .onSuccess { conferma = "Foto agganciata a ${Formato.durata(app.registrazione.durata.value)}" }
-                                        .onFailure { conferma = "Non riesco a salvare la foto." }
+                                        .onSuccess { conferma = context.getString(R.string.foto_agganciata, Formato.durata(app.registrazione.durata.value)) }
+                                        .onFailure { conferma = context.getString(R.string.foto_non_salvata) }
                                     scattando = false
                                 }
                             }
 
                             override fun onError(eccezione: ImageCaptureException) {
-                                conferma = "Scatto non riuscito."
+                                conferma = context.getString(R.string.scatto_non_riuscito)
                                 scattando = false
                             }
                         },

@@ -1,4 +1,200 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Testi di Argo · Taccuino. Lingua di base: italiano. Traduzioni in values-en, values-es, values-de.
+     Una chiave nuova va aggiunta in tutti e quattro i file (il test TraduzioniTest lo controlla). -->
 <resources>
-    <string name="nome_app">Argo · Taccuino</string>
+    <string name="nome_app" translatable="false">Argo · Taccuino</string>
+
+    <!-- Comuni -->
+    <string name="ok">OK</string>
+    <string name="annulla">Annulla</string>
+    <string name="chiudi">Chiudi</string>
+    <string name="salva">Salva</string>
+    <string name="elimina">Elimina</string>
+    <string name="indietro">Indietro</string>
+    <string name="condividi">Condividi</string>
+    <string name="riprova">Riprova</string>
+    <string name="attenzione">Attenzione</string>
+    <string name="n_foto">%1$d foto</string>
+    <string name="nome_app_versione">Argo per Android %1$s</string>
+
+    <!-- Elenco -->
+    <string name="incontri">Incontri</string>
+    <string name="impostazioni">Impostazioni</string>
+    <string name="registra">Registra</string>
+    <string name="torna_alla_registrazione">Torna alla registrazione</string>
+    <string name="registrazione_in_corso_durata">Registrazione in corso · %1$s</string>
+    <string name="nessun_incontro">Nessun incontro</string>
+    <string name="nessun_incontro_spiegazione">Tocca Registra: Argo trascrive mentre parli, aggancia le foto al momento giusto e non lascia l\'audio sul telefono.</string>
+    <string name="stato_in_elaborazione">In elaborazione</string>
+    <string name="stato_da_sistemare">Da sistemare</string>
+    <string name="stato_trascritto">Trascritto</string>
+    <string name="stato_in_attesa">In attesa</string>
+
+    <!-- Prima di registrare -->
+    <string name="prima_di_registrare">Prima di registrare</string>
+    <string name="punto_consenso">Avvisa chi hai di fronte che la conversazione viene registrata e trascritta con l\'AI, e chiedi il consenso.</string>
+    <string name="punto_locale">Audio, trascrizione e foto restano su questo telefono. La relazione la scrive Argo sul tuo computer: mai servizi cloud.</string>
+    <string name="punto_audio">L\'audio viene eliminato appena trascritto: restano testo e foto.</string>
+    <string name="punto_rileggi">La relazione generata dall\'AI va riletta prima di condividerla.</string>
+    <string name="lingua_incontro">Lingua dell\'incontro</string>
+    <string name="registra_consenso">Ho informato i partecipanti · Registra</string>
+    <string name="errore_avvio_registrazione">Non riesco ad avviare la registrazione.</string>
+    <string name="serve_microfono">Serve l\'accesso al microfono: lo trovi in Impostazioni › App › Argo › Autorizzazioni.</string>
+
+    <!-- Durante la registrazione -->
+    <string name="in_pausa">In pausa</string>
+    <string name="sto_registrando">Sto registrando</string>
+    <string name="torna_agli_incontri">Torna agli incontri, la registrazione continua</string>
+    <string name="scarta">Scarta</string>
+    <string name="trascrivo_dal_vivo">Trascrivo sul telefono mentre parli · l\'audio viene eliminato dopo</string>
+    <string name="trascrivo_dopo">Registro · la trascrizione partirà a fine incontro</string>
+    <string name="foto_al_minuto">Foto al minuto %1$s</string>
+    <string name="riprendi_registrazione">Riprendi la registrazione</string>
+    <string name="metti_in_pausa">Metti in pausa</string>
+    <string name="ferma_e_salva">Ferma e salva l\'incontro</string>
+    <string name="scatta_foto">Scatta una foto</string>
+    <string name="scartare_registrazione">Scartare la registrazione?</string>
+    <string name="scartare_spiegazione">Audio, trascrizione e foto di questo incontro verranno eliminati.</string>
+    <string name="continua_a_registrare">Continua a registrare</string>
+
+    <!-- Fotocamera -->
+    <string name="serve_fotocamera">Serve l\'accesso alla fotocamera per le foto dell\'incontro.</string>
+    <string name="consenti">Consenti</string>
+    <string name="durata_foto">● %1$s · %2$d foto</string>
+    <string name="foto_agganciata">Foto agganciata a %1$s</string>
+    <string name="foto_non_salvata">Non riesco a salvare la foto.</string>
+    <string name="scatto_non_riuscito">Scatto non riuscito.</string>
+
+    <!-- Incontro -->
+    <string name="altre_azioni">Altre azioni</string>
+    <string name="rinomina">Rinomina</string>
+    <string name="condividi_testo">Condividi il testo</string>
+    <string name="elimina_incontro">Elimina incontro</string>
+    <string name="qualcosa_non_va">Qualcosa non ha funzionato.</string>
+    <string name="relazione_e_crm">Relazione e CRM su Argo sul computer</string>
+    <string name="relazione_e_crm_spiegazione">Invia il pacchetto (testo e foto, mai l\'audio) e importalo in Argo: Incontri › Importa pacchetto…. Lì nascono la relazione, il cliente in Dynamics 365 e i task.</string>
+    <string name="errore_pacchetto">Non riesco a preparare il pacchetto: %1$s</string>
+    <string name="invia_ad_argo">Invia ad Argo sul computer</string>
+    <string name="trascrizione">Trascrizione</string>
+    <string name="titolo_incontro">Titolo dell\'incontro</string>
+    <string name="titolo_esempio">es. Stand Rossi Automazione</string>
+    <string name="eliminare_incontro">Eliminare l\'incontro?</string>
+    <string name="eliminare_incontro_spiegazione">Trascrizione e foto verranno cancellate da questo telefono. Ciò che hai già inviato ad Argo sul computer resta lì.</string>
+    <string name="trascritto_con">trascritto con %1$s</string>
+    <string name="tempi_stimati">tempi stimati</string>
+    <string name="audio_eliminato">audio eliminato</string>
+    <string name="testo_da_leggere">Testo da leggere…</string>
+    <string name="nessun_testo_leggibile">Nessun testo leggibile</string>
+    <string name="foto_incontro">Foto dell\'incontro</string>
+    <string name="pacchetto_oggetto">Pacchetto Argo · %1$s</string>
+
+    <!-- Impostazioni -->
+    <string name="lingua_app">Lingua dell\'app</string>
+    <string name="lingua_app_sistema">Come il telefono</string>
+    <string name="lingua_app_android12">Su Android 12 Argo usa la lingua del telefono.</string>
+    <string name="lingua_predefinita">Lingua predefinita degli incontri</string>
+    <string name="privacy">Privacy</string>
+    <string name="elimina_audio">Elimina l\'audio appena trascritto</string>
+    <string name="elimina_audio_spiegazione">Restano solo testo e foto. Se la trascrizione non riesce, l\'audio resta finché non la ripeti.</string>
+    <string name="promessa">Argo non è un registratore: è una stenografa digitale locale. Ascolta solo mentre lo usi, trascrive sul telefono, non conserva la voce, non invia la conversazione a un cloud e lascia a te il controllo del testo. Gli incontri sono esclusi dal backup di Google.</string>
+    <string name="crediti">Crediti</string>
+    <string name="crediti_testo">Argo locale usa NVIDIA Parakeet TDT 0.6B v3 (CC-BY-4.0, versione int8 per sherpa-onnx di k2-fsa), sherpa-onnx (Apache 2.0) e Silero VAD (MIT). Trascrizione e testo delle foto anche con Google ML Kit.</string>
+    <string name="licenze">Licenze e riconoscimenti</string>
+    <string name="licenze_non_trovate">Testo delle licenze non trovato: lo trovi su github.com/Argo-s-new-dreams/argo-android (THIRD_PARTY_LICENSES.md).</string>
+    <string name="informazioni">Informazioni</string>
+    <string name="versione_build">Argo per Android %1$s · build %2$s</string>
+    <string name="spazio_modello">Argo locale occupa circa %1$d MB sul telefono.</string>
+    <string name="elimina_modello">Elimina modello</string>
+    <string name="eliminare_modello">Eliminare il modello di Argo locale?</string>
+    <string name="eliminare_modello_spiegazione">Liberi spazio; per trascrivere di nuovo con Argo locale andrà riscaricato.</string>
+
+    <!-- Motore di trascrizione -->
+    <string name="modalita_automatica">Automatica</string>
+    <string name="modalita_automatica_desc">Avanzata (Google) se il telefono la supporta, altrimenti Argo locale</string>
+    <string name="modalita_locale">Argo locale</string>
+    <string name="modalita_locale_desc">Modello Parakeet dentro Argo: ogni telefono Android 12+, circa %1$d MB da scaricare una volta</string>
+    <string name="modalita_avanzata">Avanzata (Google)</string>
+    <string name="modalita_avanzata_desc">Gemini Nano: solo telefoni recenti, es. Galaxy S26, Pixel 10</string>
+    <string name="modalita_base">Base (Google)</string>
+    <string name="modalita_base_desc">Modello vocale di sistema; alcune lingue sono in beta e su alcuni telefoni non ci sono</string>
+    <string name="motore_android">Android · %1$s</string>
+    <string name="motore_locale">Argo locale · %1$s</string>
+    <string name="controllo_trascrizione">Controllo la trascrizione sul telefono…</string>
+    <string name="dal_vivo_pronta">Trascrizione dal vivo pronta</string>
+    <string name="dal_vivo_pronta_desc">%1$s · vedrai il testo mentre parli.</string>
+    <string name="locale_da_scaricare">Argo locale: modello da scaricare</string>
+    <string name="lingua_da_scaricare">Il modello della lingua non è ancora sul telefono</string>
+    <string name="locale_da_scaricare_desc">%1$s, circa %2$d MB, una volta sola (meglio in Wi-Fi). Poi trascrive offline, anche in fiera. Puoi registrare subito: la trascrizione partirà a fine incontro, quando il modello c\'è.</string>
+    <string name="lingua_da_scaricare_desc">Scaricalo ora (serve la rete, una volta sola). Puoi registrare subito: la trascrizione partirà a fine incontro.</string>
+    <string name="avanzamento_download">%1$d di %2$d MB · continua anche se chiudi questa schermata</string>
+    <string name="scarica_locale">Scarica Argo locale (%1$d MB)</string>
+    <string name="scarica_modello">Scarica il modello</string>
+    <string name="dati_mobili">Stai usando i dati mobili</string>
+    <string name="dati_mobili_desc">Il modello pesa circa %1$d MB. Meglio aspettare il Wi-Fi, ma se vuoi si scarica anche adesso.</string>
+    <string name="scarica_comunque">Scarica comunque</string>
+    <string name="aspetto_wifi">Aspetto il Wi-Fi</string>
+    <string name="trascrizione_non_disponibile">Trascrizione non disponibile</string>
+    <string name="google_non_disponibile">La trascrizione di Google non è disponibile su questo telefono.\n%1$s\nScegli «Argo locale» in Impostazioni › Trascrizione.</string>
+    <string name="nessuna_risposta_mlkit">nessuna risposta da ML Kit</string>
+    <string name="non_supportata_lingua">%1$s: non supportata per %2$s su questo telefono</string>
+    <string name="download_google_fallito">Download del modello non riuscito (%1$s). Serve una connessione: riprova dalle Impostazioni.</string>
+    <string name="errore_codice">errore %1$d</string>
+
+    <!-- Download di Argo locale -->
+    <string name="download_non_riuscito">Download non riuscito.</string>
+    <string name="spazio_insufficiente">Spazio insufficiente: servono %1$d MB liberi, ce ne sono %2$d.</string>
+    <string name="impronta_errata">Il file %1$s non corrisponde all\'impronta attesa: l\'ho cancellato. Riprova il download.</string>
+    <string name="server_risponde">Il server del modello ha risposto %1$d.</string>
+    <string name="download_interrotto">Download di %1$s interrotto.</string>
+    <string name="rete_instabile">Rete instabile: download di %1$s interrotto (%2$s). Riprova più tardi, riprende da dove si era fermato.</string>
+
+    <!-- Trascrizione ed elaborazione -->
+    <string name="preparo_modello">Preparo il modello sul telefono…</string>
+    <string name="trascrivo_ultimi_secondi">Trascrivo gli ultimi secondi…</string>
+    <string name="nessun_parlato">Non ho trovato parlato nella registrazione.</string>
+    <string name="trascrizione_non_riuscita">Trascrizione non riuscita: %1$s</string>
+    <string name="errore_dal_vivo">Errore della trascrizione dal vivo.</string>
+    <string name="errore_trascrizione_codice">Errore della trascrizione (codice %1$d).</string>
+    <string name="problema_dal_vivo">La trascrizione dal vivo ha avuto un problema a metà: %1$s</string>
+    <string name="microfono_non_accessibile">Non riesco ad accedere al microfono.</string>
+    <string name="registrazione_gia_in_corso">C\'è già una registrazione in corso.</string>
+    <string name="fase_preparo">Preparo…</string>
+    <string name="fase_trascrivo">Trascrivo sul telefono…</string>
+    <string name="fase_trascrivo_percento">Trascrivo sul telefono… %1$d%%</string>
+    <string name="fase_leggo_foto">Leggo la foto %1$d di %2$d…</string>
+    <string name="avviso_tempi_stimati">Trascritto dopo la registrazione: i tempi di frasi e foto sono stimati.</string>
+    <string name="modello_mancante">Il modello di trascrizione non è ancora sul telefono. Scaricalo da Impostazioni › Trascrizione, poi tocca «Riprova». L\'audio resta finché non è trascritto.</string>
+    <string name="elaborazione_non_riuscita">Elaborazione non riuscita: %1$s</string>
+
+    <!-- Avvisi di sistema -->
+    <string name="canale_registrazione">Registrazione in corso</string>
+    <string name="canale_registrazione_desc">Avviso fisso mentre Argo registra un incontro</string>
+    <string name="canale_elaborazione">Elaborazione degli incontri</string>
+    <string name="canale_elaborazione_desc">Avviso fisso mentre Argo trascrive un incontro sul telefono</string>
+    <string name="notifica_registra_titolo">Argo sta registrando l\'incontro</string>
+    <string name="notifica_registra_testo">Trascrizione sul telefono · l\'audio viene eliminato dopo</string>
+    <string name="notifica_elabora_titolo">Argo sta elaborando l\'incontro</string>
+    <string name="notifica_elabora_testo">Sul telefono, senza cloud</string>
+
+    <!-- Errore all'avvio -->
+    <string name="crash_titolo">Argo si è chiuso per un errore</string>
+    <string name="crash_oggetto">Errore di Argo per Android</string>
+    <string name="crash_condividi">Condividi l\'errore</string>
+
+    <!-- Testo esportato e relazione -->
+    <string name="parlante_n">Parlante %1$s</string>
+    <string name="incontro_del">Incontro del %1$s</string>
+    <string name="testo_nessun_testo">nessun testo leggibile</string>
+    <string name="testo_foto">FOTO</string>
+    <string name="md_riassunto">Riassunto</string>
+    <string name="md_contatti">Contatti</string>
+    <string name="md_punti_chiave">Punti chiave</string>
+    <string name="md_azioni">Azioni</string>
+    <string name="md_trascrizione">Trascrizione</string>
+    <string name="md_relazione">relazione: %1$s</string>
+    <string name="md_solo_trascrizione">solo trascrizione</string>
+    <string name="md_generato">Generato con %1$s · trascrizione sul dispositivo · %2$s</string>
+    <string name="md_entro">entro %1$s</string>
+    <string name="formato_data_lunga">d MMMM yyyy \'alle\' HH:mm</string>
+    <string name="formato_data_breve">d MMM, HH:mm</string>
 </resources>
