@@ -88,3 +88,14 @@ Da rivedere prima dell'invio: la responsabilità della dichiarazione è dello sv
 | Audio, foto, testo degli incontri | **Non raccolti**: restano sul telefono; l'invio al computer avviene solo per scelta dell'utente, tramite la condivisione di Android verso un'app che sceglie lui | [Termini ML Kit](https://developers.google.com/ml-kit/terms): input elaborati interamente sul dispositivo |
 | Dati criptati in transito | Sì | ML Kit usa HTTPS |
 | L'utente può chiedere la cancellazione | Sì: eliminando l'incontro o l'app | Nessun dato su server di Argo |
+
+## Scheda dello Store in quattro lingue
+
+Titolo, descrizione breve (max 80) e descrizione completa (max 4000) stanno in `docs/play/scheda/<lingua>.json`: `it-IT`, `en-US`, `de-DE`, `es-ES`. Il titolo è «Argo · Taccuino» in tutte le lingue.
+
+```bash
+uv run --with google-api-python-client --with google-auth strumenti/play.py scheda leggi
+uv run --with google-api-python-client --with google-auth strumenti/play.py scheda scrivi
+```
+
+`leggi` salva la scheda attuale di Play in `docs/play/scheda/da-play/` per confrontarla con i file; `scrivi` aggiorna tutte le lingue e pubblica la modifica. All'account di servizio serve il permesso **Gestisci la presenza nello Store** (Play Console › Utenti e autorizzazioni). Gli screenshot restano quelli italiani finché non se ne caricano altri per lingua.

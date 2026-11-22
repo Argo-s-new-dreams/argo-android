@@ -3,10 +3,12 @@
   play.py carica internal              carica l'AAB di VERSIONE nel test interno, note dal CHANGELOG
   play.py promuovi internal alpha      porta la stessa versione dal test interno al test chiuso (revisione Google)
   play.py stato                        versioni presenti in ogni traccia
+  play.py scheda leggi                 salva la scheda attuale di Play in docs/play/scheda/da-play/<lingua>.json
+  play.py scheda scrivi                scrive titolo e descrizioni da docs/play/scheda/<lingua>.json (it-IT, en-US, de-DE, es-ES)
 
 Account di servizio: ~/.argo-chiavi/play-service-account.json (o $ARGO_CHIAVI; vecchia sede ~/Documents/ArgoChiavi)
 """
-import os, re, sys
+import json, os, re, sys
 from datetime import datetime
 from pathlib import Path
 from google.oauth2 import service_account
@@ -106,6 +108,43 @@ def stato():
     e.delete(packageName=PACCHETTO, editId=edit).execute()
 
 
+SCHEDA = Path("docs/play/scheda")
+LIMITI = {"title": 30, "shortDescription": 80, "fullDescription": 4000}
+
+
+def scheda(azione="?"):
+    if azione not in ("leggi", "scrivi"):
+        sys.exit(__doc__)
+    e = api()
+    edit = e.insert(packageName=PACCHETTO, body={}).execute()["id"]
+    if azione == "leggi":
+        uscita = SCHEDA / "da-play"
+        uscita.mkdir(parents=True, exist_ok=True)
+        for l in e.listings().list(packageName=PACCHETTO, editId=edit).execute().get("listings", []):
+            dati = {k: l.get(k, "") for k in ("title", "shortDescription", "fullDescription")}
+            (uscita / f"{l['language']}.json").write_text(json.dumps(dati, ensure_ascii=False, indent=2) + "\n")
+            print(f"📄 {l['language']}: «{dati['title']}» → {uscita / (l['language'] + '.json')}")
+        e.delete(packageName=PACCHETTO, editId=edit).execute()
+        return
+    schede = {f.stem: json.loads(f.read_text()) for f in sorted(SCHEDA.glob("*.json"))}
+    for lingua, d in schede.items():
+        for campo, limite in LIMITI.items():
+            if len(d.get(campo, "")) > limite:
+                sys.exit(f"{lingua}: {campo} di {len(d[campo])} caratteri (massimo {limite}).")
+    try:
+        for lingua, d in schede.items():
+            e.listings().update(packageName=PACCHETTO, editId=edit, language=lingua,
+                                body={"language": lingua, **{k: d[k] for k in LIMITI}}).execute()
+            print(f"✅ {lingua}: «{d['title']}»")
+        e.commit(packageName=PACCHETTO, editId=edit).execute()
+    except HttpError as err:
+        if err.resp.status == 403:
+            sys.exit("Play ha risposto 403: all'account di servizio serve il permesso «Gestisci la presenza "
+                     "nello Store» (Play Console › Utenti e autorizzazioni), oppure c'è una dichiarazione in revisione.")
+        raise
+    print("Scheda pubblicata su Google Play in: " + ", ".join(schede))
+
+
 if __name__ == "__main__":
     comando, *argomenti = sys.argv[1:] or ["?"]
-    {"carica": carica, "promuovi": promuovi, "stato": stato}.get(comando, lambda *a: sys.exit(__doc__))(*argomenti)
+    {"carica": carica, "promuovi": promuovi, "stato": stato, "scheda": scheda}.get(comando, lambda *a: sys.exit(__doc__))(*argomenti)
