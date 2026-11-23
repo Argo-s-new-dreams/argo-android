@@ -10,7 +10,7 @@ plugins {
 }
 
 // Versione come su iPhone: semver per le persone, build AAAAMMGG.HHMM (ora di Roma) nel file VERSIONE.
-val versioneMarketing = "0.3.0"
+val versioneMarketing = "0.3.1"
 val build: String = rootProject.file("VERSIONE").readText().trim()
 
 // Google Play vuole un versionCode intero e sempre crescente: minuti trascorsi dal 1/1/2026 alla build.
@@ -57,6 +57,8 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            // Tabella dei simboli delle librerie native nell'AAB: Play la usa per leggere i crash nativi
+            ndk { debugSymbolLevel = "SYMBOL_TABLE" }
             if (firma.isNotEmpty()) signingConfig = signingConfigs.getByName("play")
         }
         debug {

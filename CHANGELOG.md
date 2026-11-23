@@ -3,7 +3,22 @@
 Tutte le modifiche rilevanti di Argo per Android.
 Versioni: `versionName` (semver) + build `AAAAMMGG.HHMM` (ora di Roma).
 
-## [0.3.0] · build (al prossimo invio)
+## [0.3.1] · build (al prossimo invio)
+
+Un link che Google Play chiedeva e un'icona che finalmente si adatta al telefono.
+
+### Aggiunto
+- **Informativa sulla privacy dentro l'app.** In Impostazioni › Privacy c'è il link all'informativa sul blog, nella lingua dell'app (italiano, inglese, tedesco o spagnolo). Google Play lo richiede.
+- **Icona adattiva.** Il logo di Argo's New Dreams su fondo carta: il telefono la ritaglia nella forma che usa per tutte le icone (cerchio, quadrato arrotondato, goccia), senza bordi strani.
+
+### Modificato
+- Nel pacchetto per Google Play c'è anche la tabella dei simboli delle librerie native, così la Console può leggere un eventuale crash nativo (sherpa-onnx, ONNX Runtime).
+
+### Da provare
+- Impostazioni › Privacy › «Informativa sulla privacy»: si apre la pagina giusta; con l'app in inglese si apre quella in inglese
+- Home del telefono: l'icona di Argo ha la stessa forma delle altre e il logo non è tagliato
+
+## [0.3.0] · build 20261123.0319
 
 Argo parla quattro lingue: italiano, inglese, spagnolo e tedesco. E da Android 15 non si chiude più quando premi Stop.
 

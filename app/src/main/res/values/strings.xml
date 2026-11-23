@@ -100,6 +100,8 @@
     <string name="crediti">Crediti</string>
     <string name="crediti_testo">Argo locale usa NVIDIA Parakeet TDT 0.6B v3 (CC-BY-4.0, versione int8 per sherpa-onnx di k2-fsa), sherpa-onnx (Apache 2.0) e Silero VAD (MIT). Trascrizione e testo delle foto anche con Google ML Kit.</string>
     <string name="licenze">Licenze e riconoscimenti</string>
+    <string name="informativa_privacy">Informativa sulla privacy</string>
+    <string name="url_informativa">https://argosnewdreams.blog/argo-privacy/</string>
     <string name="licenze_non_trovate">Testo delle licenze non trovato: lo trovi su github.com/Argo-s-new-dreams/argo-android (THIRD_PARTY_LICENSES.md).</string>
     <string name="informazioni">Informazioni</string>
     <string name="versione_build">Argo per Android %1$s · build %2$s</string>

@@ -104,6 +104,7 @@ fun ImpostazioniScreen(app: ArgoApp, indietro: () -> Unit) {
                 style = MaterialTheme.typography.bodySmall, color = Argo.colori.tenue,
                 modifier = Modifier.padding(top = 8.dp),
             )
+            InformativaRiga()
 
             Sezione(stringResource(R.string.crediti))
             Text(
@@ -117,6 +118,16 @@ fun ImpostazioniScreen(app: ArgoApp, indietro: () -> Unit) {
             Text("Argo's New Dreams · argosnewdreams.blog", style = MaterialTheme.typography.bodySmall, color = Argo.colori.tenue)
             Spacer(Modifier.size(24.dp))
         }
+    }
+}
+
+/** Link all'informativa sulla privacy sul blog, nella lingua dell'app (richiesto da Google Play). */
+@Composable
+private fun InformativaRiga() {
+    val uri = androidx.compose.ui.platform.LocalUriHandler.current
+    val indirizzo = stringResource(R.string.url_informativa)
+    androidx.compose.material3.TextButton(onClick = { runCatching { uri.openUri(indirizzo) } }) {
+        Text(stringResource(R.string.informativa_privacy))
     }
 }
 
