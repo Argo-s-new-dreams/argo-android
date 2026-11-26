@@ -9,6 +9,7 @@ Un link che Google Play chiedeva e un'icona che finalmente si adatta al telefono
 
 ### Aggiunto
 - **Informativa sulla privacy dentro l'app.** In Impostazioni › Privacy c'è il link all'informativa sul blog, nella lingua dell'app (italiano, inglese, tedesco o spagnolo). Google Play lo richiede.
+- **Scorciatoia «Registra».** Tieni premuta l'icona di Argo e scegli *Registra*: si apre direttamente la registrazione, con l'informativa da confermare. Puoi anche trascinarla sulla schermata Home. Utile in auto: Android Auto non ammette app che registrano o conversano, quindi Argo resta sul telefono, ma si avvia in un attimo.
 - **Icona adattiva.** Il logo di Argo's New Dreams su fondo carta: il telefono la ritaglia nella forma che usa per tutte le icone (cerchio, quadrato arrotondato, goccia), senza bordi strani.
 
 ### Modificato

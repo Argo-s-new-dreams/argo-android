@@ -1,6 +1,9 @@
 package blog.argosnewdreams.argo
 
 import android.content.Intent
+import android.content.pm.ShortcutInfo
+import android.content.pm.ShortcutManager
+import android.graphics.drawable.Icon
 import android.os.Bundle
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.rememberScrollState
@@ -9,6 +12,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,12 +34,34 @@ import blog.argosnewdreams.argo.ui.TemaArgo
 
 class MainActivity : ComponentActivity() {
 
+    /** Scorciatoia «Registra» (icona tenuta premuta o comando vocale che la apre): si va alla registrazione. */
+    private var daScorciatoia by mutableStateOf(false)
+
+    /** Scorciatoia «Registra» sull'icona (creata dal codice, così vale anche per le versioni Lab con un altro id). */
+    private fun pubblicaScorciatoie() {
+        runCatching {
+            val registra = ShortcutInfo.Builder(this, "registra")
+                .setShortLabel(getString(R.string.registra))
+                .setLongLabel(getString(R.string.registra))
+                .setIcon(Icon.createWithResource(this, R.mipmap.ic_launcher))
+                .setIntent(Intent(AZIONE_REGISTRA).setClass(this, MainActivity::class.java))
+                .build()
+            getSystemService(ShortcutManager::class.java)?.dynamicShortcuts = listOf(registra)
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        if (intent.action == AZIONE_REGISTRA) daScorciatoia = true
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         val app = application as ArgoApp
+        pubblicaScorciatoie()
         // Riaperta dalla notifica durante una registrazione: si va dritti alla registrazione.
-        val partenza = if (app.registrazione.attiva.value != null) "registra" else "elenco"
+        val partenza = if (app.registrazione.attiva.value != null || intent?.action == AZIONE_REGISTRA) "registra" else "elenco"
 
         setContent {
             TemaArgo {
@@ -66,6 +92,12 @@ class MainActivity : ComponentActivity() {
                     )
                 }
                 val nav = rememberNavController()
+                LaunchedEffect(daScorciatoia) {
+                    if (daScorciatoia) {
+                        daScorciatoia = false
+                        nav.navigate("registra") { launchSingleTop = true }
+                    }
+                }
                 NavHost(navController = nav, startDestination = partenza) {
                     composable("elenco") {
                         ElencoScreen(
@@ -99,3 +131,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
+/** Azione della scorciatoia «Registra» (res/xml/scorciatoie.xml). */
+const val AZIONE_REGISTRA = "blog.argosnewdreams.argo.REGISTRA"
