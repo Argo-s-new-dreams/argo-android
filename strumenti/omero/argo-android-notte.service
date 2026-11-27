@@ -1,0 +1,10 @@
+[Unit]
+Description=Argo Android: invio notturno al test interno di Google Play (se ci sono novità)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+Environment=ANDROID_HOME=%h/android-sdk
+Environment=PATH=%h/.local/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=%h/Sviluppo/argo-android/strumenti/pubblica-se-serve.sh
