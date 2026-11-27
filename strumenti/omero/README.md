@@ -10,7 +10,7 @@ invio ci sono modifiche all'app con la loro voce nel CHANGELOG (come sul Mac).
 | Chiavi | `~/.argo-chiavi/` (`play-service-account.json`, `argo-upload.jks`), mai nel repo |
 | Firma | `~/Sviluppo/argo-android/keystore.properties` con `storeFile` che punta a `~/.argo-chiavi/argo-upload.jks` |
 | SDK Android | `~/android-sdk` (piattaforma e build-tools 37), `local.properties` con `sdk.dir` |
-| Java | `openjdk-21-jdk-headless` |
+| Java | `openjdk-25-jdk-headless` (con Java 21 la chiave di caricamento non si apre: la password ha caratteri accentati) |
 | Log | `~/.local/state/argo/log/argo-android.log`; avvisi in `avvisi.log` nella stessa cartella |
 
 Installazione delle unità:
